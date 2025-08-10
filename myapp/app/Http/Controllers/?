@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\RegisterRequest;
+use App\Services\Email\EmailVerificationService;
+use App\Models\User;
+use App\Http\Requests\CheckCodeEmailRequest;
+class RegistrationController extends Controller
+{
+   public $emailVerificationService;
+
+   public function __construct(EmailVerificationService $emailVerificationService){
+     $this->emailVerificationService = $emailVerificationService;
+   }
+
+   public function handlePost(RegisterRequest $r){
+      $this->emailVerificationService->verification($r->email);
+    /*  User::create([
+         'name'=>$r->name,
+          'password'=>$r->password,
+           'email'=>$r->email
+      ]);
+ */
+      return $r->json(['status'=>"ok"]);
+   }
+
+   //Пост проверки кода
+   public function checkCode(CheckCodeEmailRequest $r){
+      $this->emailVerificationService->verificationEmailCode($r->email);
+     return $r->json(['status'=>"ok"]);
+   }
+}

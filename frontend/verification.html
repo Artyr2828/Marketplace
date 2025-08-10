@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <!-- ... (остальная часть head без изменений) ... -->
+</head>
+<body>
+    <!-- ... (остальная часть HTML без изменений) ... -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Получаем email из URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const userEmail = urlParams.get('email');
+            
+            if (!userEmail) {
+                window.location.href = 'registration.html';
+                return;
+            }
+
+            // Устанавливаем email в поле
+            document.getElementById('user-email').textContent = userEmail;
+
+            // Элементы формы
+            const verificationForm = document.getElementById('verificationForm');
+            const codeInputs = document.querySelectorAll('.code-input');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const resendLink = document.getElementById('resend-link');
+            const timerElement = document.getElementById('timer');
+
+            // Таймер для повторной отправки
+            let countdown = 60;
+            let timer;
+
+            // Запускаем таймер
+            startCountdown();
+
+            // Обработчик ввода кода
+            codeInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const value = this.value;
+                    const index = parseInt(this.dataset.index);
+                    
+                    if (value.length === 1 && index < 3) {
+                        codeInputs[index + 1].focus();
+                    }
+                });
+            });
+
+            // Автофокус на первое поле
+            codeInputs[0].focus();
+
+            // Обработчик отправки формы
+            verificationForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Собираем код из 4 полей
+                let code = '';
+                codeInputs.forEach(input => {
+                    code += input.value;
+                });
+
+                if (code.length !== 4) {
+                    showError('code-error', 'Введите 4-значный код');
+                    return;
+                }
+                
+                verifyBtn.disabled = true;
+                verifyBtn.textContent = 'Проверка...';
+                
+                try {
+                    const response = await fetch('http://localhost:8000/api/register/check-code', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: userEmail,  // Добавляем email
+                            code: code        // Добавляем код
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Неверный код подтверждения');
+                    }
+                    
+                    // Успешное подтверждение
+                    alert('Регистрация завершена!');
+                    window.location.href = 'login.html'; // Перенаправляем на вход
+                } catch (error) {
+                    showError('code-error', error.message);
+                } finally {
+                    verifyBtn.disabled = false;
+                    verifyBtn.textContent = 'Подтвердить';
+                }
+            });
+
+            // Обработчик повторной отправки кода
+            resendLink.addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                try {
+                    const response = await fetch('http://localhost:8000/api/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: userEmail  // Отправляем только email для повторной отправки кода
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Ошибка отправки кода');
+                    }
+                    
+                    // Сброс таймера
+                    startCountdown();
+                    
+                    // Очистка полей
+                    codeInputs.forEach(input => input.value = '');
+                    codeInputs[0].focus();
+                    
+                    hideError('code-error');
+                } catch (error) {
+                    showError('code-error', error.message);
+                }
+            });
+
+            // ... (остальные функции без изменений) ...
+		function startCountdown() {
+    countdown = 60;
+    resendLink.classList.add('hidden');
+    timerElement.classList.remove('hidden');
+    updateTimerDisplay();
+    
+    timer = setInterval(() => {
+        countdown--;
+        updateTimerDisplay();
+        
+        if (countdown <= 0) {
+            clearInterval(timer);
+            timerElement.classList.add('hidden');
+            resendLink.classList.remove('hidden');
+        }
+    }, 1000);
+}
+	function updateTimerDisplay() {
+    timerElement.textContent = `Отправить код повторно через ${countdown} сек`;
+}
+	 function showError(elementId, message) {
+    const errorElement = document.getElementById(elementId);
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+}
+	 function hideError(elementId) {
+    const errorElement = document.getElementById(elementId);
+    errorElement.style.display = 'none';
+}
+        });
+    </script>
+</body>
+</html>
