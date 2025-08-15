@@ -1,10 +1,167 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- ... (остальная часть head без изменений) ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подтверждение email</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --error-color: #ef4444;
+            --success-color: #10b981;
+            --text-color: #1f2937;
+            --light-gray: #f3f4f6;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .description {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #6b7280;
+        }
+
+        .code-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .code-inputs input {
+            width: 60px;
+            height: 70px;
+            font-size: 24px;
+            text-align: center;
+            padding: 0;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+        }
+
+        .code-inputs input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 5px;
+            text-align: center;
+            display: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #6366f1;
+        }
+
+        button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .resend-code {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .resend-code a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .resend-code a:hover {
+            text-decoration: underline;
+        }
+
+        .resend-code .timer {
+            color: #6b7280;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .user-email {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+    </style>
 </head>
 <body>
-    <!-- ... (остальная часть HTML без изменений) ... -->
+    <div class="container">
+        <div class="form-container">
+            <h1>Подтверждение email</h1>
+            <p class="description">Мы отправили код подтверждения на<br><span id="user-email" class="user-email"></span></p>
+            
+            <form id="verificationForm">
+                <div class="code-inputs">
+                    <input type="text" maxlength="1" data-index="0" class="code-input">
+                    <input type="text" maxlength="1" data-index="1" class="code-input">
+                    <input type="text" maxlength="1" data-index="2" class="code-input">
+                    <input type="text" maxlength="1" data-index="3" class="code-input">
+                </div>
+                <div class="error-message" id="code-error"></div>
+                <button type="submit" id="verifyBtn">Подтвердить</button>
+            </form>
+
+            <div class="resend-code">
+                <div class="timer" id="timer">Отправить код повторно через 60 сек</div>
+                <a href="#" id="resend-link" class="hidden">Отправить код повторно</a>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -44,6 +201,14 @@
                         codeInputs[index + 1].focus();
                     }
                 });
+                
+                input.addEventListener('keydown', function(e) {
+                    const index = parseInt(this.dataset.index);
+                    
+                    if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
             });
 
             // Автофокус на первое поле
@@ -75,8 +240,8 @@
                             'Accept': 'application/json'
                         },
                         body: JSON.stringify({
-                            email: userEmail,  // Добавляем email
-                            code: code        // Добавляем код
+                            email: userEmail,
+                            code: code
                         })
                     });
                     
@@ -88,7 +253,7 @@
                     
                     // Успешное подтверждение
                     alert('Регистрация завершена!');
-                    window.location.href = 'login.html'; // Перенаправляем на вход
+                    window.location.href = 'login.html';
                 } catch (error) {
                     showError('code-error', error.message);
                 } finally {
@@ -98,27 +263,69 @@
             });
 
             // Обработчик повторной отправки кода
-            resendLink.addEventListener('click', async function(e) {
-                e.preventDefault();
-                
-                try {
-                    const response = await fetch('http://localhost:8000/api/register', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            email: userEmail  // Отправляем только email для повторной отправки кода
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (!response.ok) {
-                        throw new Error(data.message || 'Ошибка отправки кода');
-                    }
-                    
+resendLink.addEventListener('click', async function(e) {
+    e.preventDefault();
+    
+    const API_URL = 'http://localhost:8000/api/register/check-code/regenerateCode';
+    console.log('URL запроса:', API_URL); // Для отладки
+
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: userEmail })
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => null);
+            throw new Error(error?.message || 'Ошибка сервера');
+        }
+
+        startCountdown();
+        alert('Код отправлен!');
+    } catch (error) {
+        console.error('Ошибка:', error);
+        showError('code-error', error.message);
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
                     // Сброс таймера
                     startCountdown();
                     
@@ -127,41 +334,45 @@
                     codeInputs[0].focus();
                     
                     hideError('code-error');
+                    alert('Новый код отправлен на ваш email!');
                 } catch (error) {
                     showError('code-error', error.message);
                 }
             });
 
-            // ... (остальные функции без изменений) ...
-		function startCountdown() {
-    countdown = 60;
-    resendLink.classList.add('hidden');
-    timerElement.classList.remove('hidden');
-    updateTimerDisplay();
-    
-    timer = setInterval(() => {
-        countdown--;
-        updateTimerDisplay();
-        
-        if (countdown <= 0) {
-            clearInterval(timer);
-            timerElement.classList.add('hidden');
-            resendLink.classList.remove('hidden');
-        }
-    }, 1000);
-}
-	function updateTimerDisplay() {
-    timerElement.textContent = `Отправить код повторно через ${countdown} сек`;
-}
-	 function showError(elementId, message) {
-    const errorElement = document.getElementById(elementId);
-    errorElement.textContent = message;
-    errorElement.style.display = 'block';
-}
-	 function hideError(elementId) {
-    const errorElement = document.getElementById(elementId);
-    errorElement.style.display = 'none';
-}
+            // Функции таймера и ошибок
+            function startCountdown() {
+                countdown = 60;
+                resendLink.classList.add('hidden');
+                timerElement.classList.remove('hidden');
+                updateTimerDisplay();
+                
+                timer = setInterval(() => {
+                    countdown--;
+                    updateTimerDisplay();
+                    
+                    if (countdown <= 0) {
+                        clearInterval(timer);
+                        timerElement.classList.add('hidden');
+                        resendLink.classList.remove('hidden');
+                    }
+                }, 1000);
+            }
+
+            function updateTimerDisplay() {
+                timerElement.textContent = `Отправить код повторно через ${countdown} сек`;
+            }
+
+            function showError(elementId, message) {
+                const errorElement = document.getElementById(elementId);
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+
+            function hideError(elementId) {
+                const errorElement = document.getElementById(elementId);
+                errorElement.style.display = 'none';
+            }
         });
     </script>
 </body>

@@ -19,7 +19,5 @@ use App\Http\Controllers\RegistrationController;
 });*/
 Route::post('/register', [RegistrationController::class, 'handlePost']);
 Route::post('/register/check-code', [RegistrationController::class, 'checkCode']);
+Route::post('/register/check-code/regenerateCode', [RegistrationController::class, 'regenerateCode']);
 
-/*Route::options('{any}', function () {
-    return response()->json([], 200);
-})->where('any', '.*');*/
