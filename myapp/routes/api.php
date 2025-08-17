@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,5 +20,11 @@ use App\Http\Controllers\RegistrationController;
 });*/
 Route::post('/register', [RegistrationController::class, 'handlePost']);
 Route::post('/register/check-code', [RegistrationController::class, 'checkCode']);
-Route::post('/register/check-code/regenerateCode', [RegistrationController::class, 'regenerateCode']);
-
+Route::post('/register/regenerateCode', [RegistrationController::class, 'regenerateCode']);
+//Логин
+Route::post('/login', [AuthController::class, 'login']);
+//Роутеры которые требуют Jwt
+Route::middleware('auth:api')->group(function(){
+     //
+   }
+);

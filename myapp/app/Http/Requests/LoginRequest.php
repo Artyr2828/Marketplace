@@ -23,7 +23,6 @@
       public function rules(): array
       {
           return [
-              'name'=>'required|min:3|string|max:9',
               'password'=>'required|min:8|max:20',
                'email'=>'required|email'
           ];
