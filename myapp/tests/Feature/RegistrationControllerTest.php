@@ -17,7 +17,7 @@ use RefreshDatabase;
 
         $response = $this->post('/api/register', [
            'name'=>'Artyr',
-           'email'=>'test@gmail.com',
+           'email'=>'nikololi@gmail.com',
            'password'=>'1929929919',
             'password_confirmation'=>'1929929919'
         ]);

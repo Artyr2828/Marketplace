@@ -15,23 +15,23 @@ use App\Interfaces\VerificationCodeInterface;
 class RegistrationController extends Controller
 {
    private $emailVerificationService;
-   private $pendingUserStorage;
    private $userRegistrationService;
    private $verificationCodeStorage;
-   public function __construct(EmailVerificationService $emailVerificationService, PendingUserStorageInterface $pendingUserStorage, UserRegistrationInterface $userRegistrationService, VerificationCodeInterface $verificationCodeStorage){
+   public function __construct(EmailVerificationService $emailVerificationService, UserRegistrationInterface $userRegistrationService, VerificationCodeInterface $verificationCodeStorage){
      $this->emailVerificationService = $emailVerificationService;
-     $this->pendingUserStorage = $pendingUserStorage;
      $this->userRegistrationService = $userRegistrationService;
      $this->verificationCodeStorage = $verificationCodeStorage;
    }
 
    public function handlePost(RegisterRequest $r){
       $dataUser = ['name'=>$r->name, 'email'=>$r->email, 'password'=> Hash::make($r->password)];
+     //Проверяем нет ли в БД этого пользователя
       $this->userRegistrationService->ensureUserDoesNotExist($dataUser['email']);
-      //добав. в Redis
-      $this->pendingUserStorage->setUser($r->email, $dataUser);
+      //если нет то добавляем
       $user = $this->userRegistrationService->addUserInDb($dataUser);
+      //ставим задачу на через пять минут удалить пользователя если емэйл не подтвержден
       DeleteUserJob::dispatch($user->id)->delay(now()->addMinute(5));
+      //отправляем код подтверждения
       $this->emailVerificationService->sendVerificationCodeToEmail($r->email, 300);
 
      return response()->api(['message'=>"Регистрация Успешна, требуется подтвердить код"]);

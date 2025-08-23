@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
-use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Tymon\JWTAuth\JWTAuth;
-use Exception;
+use App\Interfaces\AuthenticationServiceInterface;
 
 class AuthController extends Controller
 {
+    private $authenticationJWT;
+
+    public function __construct(AuthenticationServiceInterface $authenticationJWT){
+       $this->authenticationJWT = $authenticationJWT;
+    }
+
+
     public function login(LoginRequest $r){
       $credentails =  $r->only('email','password');
-      $token = auth('api')->attempt($credentails);
-      if (!$token){
-         throw new \Exception("походу вы не зарегестрированы");
-      }
+      $token = $this->authenticationJWT->authentication($credentails);
+      //для тестов
       error_log($token);
-    /** @var \Tymon\JWTAuth\JWTGuard $auth */
-$auth = auth('api');
-
+      /** @var \Tymon\JWTAuth\JWTGuard $auth */
+      $auth = auth('api');
+      //возращяем токен
      return response()->api([
           'token'=>$token,
            'token_type'=>'bearer',

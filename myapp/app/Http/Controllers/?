@@ -14,15 +14,16 @@ class HomeController extends Controller
    }
 
     public function getDataHomePage(Request $r){
-     //отдаем прлдукты с лимтом 10
+     //отдаем
+  //   $image = ImgPath::with('productConnect')->get();
      $products = $this->homePageService->getProducts();
      return response()->api($products);
     }
 
     public function search(Request $r){
       $data = $r->input('search');
-      $product = $this->homePageService->searchProduct($data);
+      $product = Product::query()->with('img_Connect')->get();
 
-      return response()->api(['product'=>$product]);
+      return response()->api(['product'=>$product->toArray()]);
     }
 }

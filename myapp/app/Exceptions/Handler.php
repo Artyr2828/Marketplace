@@ -7,7 +7,7 @@ use Throwable;
 use App\Exceptions\VerificationCodeAlreadySentException;
 use App\Exceptions\InvalidEmailCodeException;
 use Illuminate\Validation\ValidationException;
-
+use Illuminate\Auth\AuthenticationException;
 class Handler extends ExceptionHandler
 
 {
@@ -21,61 +21,13 @@ class Handler extends ExceptionHandler
      return response()->json(['statys'=>'error', 'error'=>$exception->getMessage()],500, [], JSON_UNESCAPED_UNICODE);
     }
 
-/*
-public function render($request, Throwable $exception)
-{
-    if ($request->expectsJson()) {
-        return parent::render($request, $exception);
-    }
-
-    // Убираем редирект вообще
-    if ($exception instanceof ValidationException) {
-        return response()->json([
-            'message' => 'Validation error',
-            'errors' => $exception->errors()
-        ], 422);
-    }
-
-    return parent::render($request, $exception);
-}
-*/
-/*
-public function render($request, Throwable $exception)
-{
-    if ($request->expectsJson()) {
-        return parent::render($request, $exception);
-    }
-
-    // Принудительно всегда JSON, если вдруг не указан Accept
-    if ($request->is('api/*')) {
-        return response()->json([
-            'message' => $exception->getMessage(),
-        ], method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500);
-    }
-
-    return parent::render($request, $exception);
-}
-   */
-
-
-/*public function render($request, Throwable $exception)
-{
-    if ($request->expectsJson() || $request->is('api/*')) {
-        $status = 500; // По умолчанию
-
-        if ($exception instanceof HttpExceptionInterface) {
-            $status = $exception->getStatusCode();
-        }
-
-        return response()->json([
-            'message' => $exception->getMessage(),
-        ], $status);
-    }
-
-    return parent::render($request, $exception);
-}
-*/
-
+  protected function unauthenticated($request, AuthenticationException $e){
+     if ($request->expectsJson()){
+       return response()->api(["status"=>"AuthorizationUser"]);
+    } else{
+        return response()->api(["status"=>"Error"]);
+     }
+  }
 
 
  public function invalidJson($request, ValidationException $exception)
