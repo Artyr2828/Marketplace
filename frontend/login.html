@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход</title>
+  <style>
+      :root {
+          --primary-color: #4f46e5;
+          --secondary-color: #6366f1;
+          --success-color: #10b981;
+          --error-color: #ef4444;
+          --text-color: #1f2937;
+          --light-gray: #f3f4f6;
+          --white: #ffffff;
+      }
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      body {
+          background-color: var(--light-gray);
+          color: var(--text-color);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          padding: 20px;
+      }
+      .container {
+          width: 100%;
+          max-width: 400px;
+          background-color: var(--white);
+          border-radius: 12px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+          padding: 40px;
+          transition: all 0.3s ease;
+      }
+      h1 {
+          font-size: 24px;
+          margin-bottom: 30px;
+          text-align: center;
+          color: var(--primary-color);
+      }
+      .form-group {
+          margin-bottom: 20px;
+      }
+      label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 500;
+      }
+      input {
+          width: 100%;
+          padding: 12px 15px;
+          border: 1px solid #d1d5db;
+          border-radius: 8px;
+          font-size: 16px;
+          transition: border-color 0.3s;
+      }
+      input:focus {
+          outline: none;
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+      }
+      .error-message {
+          color: var(--error-color);
+          font-size: 14px;
+          margin-top: 5px;
+          display: none;
+      }
+      button {
+          width: 100%;
+          padding: 14px;
+          background-color: var(--primary-color);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background-color 0.3s;
+          margin-top: 10px;
+      }
+      button:hover {
+          background-color: var(--secondary-color);
+      }
+      button:disabled {
+          background-color: #9ca3af;
+          cursor: not-allowed;
+      }
+      .links {
+          margin-top: 20px;
+          text-align: center;
+      }
+      .links a {
+          color: var(--primary-color);
+          text-decoration: none;
+          font-weight: 500;
+      }
+      .links a:hover {
+          text-decoration: underline;
+      }
+  </style>
+</head>
+<body>
+  <div class="container">
+      <h1>Вход</h1>
+      <form id="loginForm">
+          <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="Введите email">
+              <div class="error-message" id="email-error"></div>
+          </div>
+          <div class="form-group">
+              <label for="password">Пароль</label>
+              <input type="password" id="password" name="password" placeholder="Введите пароль">
+              <div class="error-message" id="password-error"></div>
+          </div>
+          <button type="submit" id="loginBtn">Войти</button>
+      </form>
+
+      <div class="links">
+          <p>Нет аккаунта? <a href="/register">Регистрация</a></p>
+      </div>
+  </div>
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const loginForm = document.getElementById('loginForm');
+          const emailInput = document.getElementById('email');
+          const passwordInput = document.getElementById('password');
+          const loginBtn = document.getElementById('loginBtn');
+
+          loginForm.addEventListener('submit', async function(e) {
+              e.preventDefault();
+
+              // простая валидация
+              if (!emailInput.value) {
+                  showError('email-error', 'Введите email');
+                  return;
+              }
+              if (!passwordInput.value) {
+                  showError('password-error', 'Введите пароль');
+                  return;
+              }
+
+              loginBtn.disabled = true;
+              loginBtn.textContent = 'Вход...';
+
+              try {
+                  const response = await fetch('http://localhost:8000/api/login', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json'
+                      },
+                      body: JSON.stringify({
+                          email: emailInput.value,
+                          password: passwordInput.value
+                      })
+                  });
+
+                  const data = await response.json();
+
+                  if (!response.ok) {
+                      throw new Error(data.message || 'Ошибка входа');
+                  }
+
+                  // сохраняем токен в localStorage
+                  localStorage.setItem('token', data.token);
+
+                  // редирект на главную страницу
+                  window.location.href = 'home.html';
+              } catch (error) {
+                  showError('password-error', error.message);
+              } finally {
+                  loginBtn.disabled = false;
+                  loginBtn.textContent = 'Войти';
+              }
+          });
+
+          function showError(elementId, message) {
+              const errorElement = document.getElementById(elementId);
+              errorElement.textContent = message;
+              errorElement.style.display = 'block';
+          }
+      });
+  </script>
+</body>
+</html>
+

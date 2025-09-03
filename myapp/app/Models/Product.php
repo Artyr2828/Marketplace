@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ImgPath;
 use App\Models\DescriptionProduct;
+use App\Models\CartItems;
+use App\Models\OrderItem;
+
 class Product extends Model
 {
     use HasFactory;
@@ -23,5 +26,13 @@ class Product extends Model
 
   public function desc_Connect(){
     return $this->hasOne(DescriptionProduct::class, 'product_id');
+  }
+
+  public function items(){
+    return $this->hasMany(CartItems::class);
+  }
+
+  public function orderItem(){
+    return $this->belongsTo(OrderItem::class);
   }
 }

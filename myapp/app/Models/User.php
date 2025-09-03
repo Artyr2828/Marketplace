@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Models\Carts;
+use App\Models\OrdersTable;
 class User extends Authenticatable implements JWTSubject
 {
 
@@ -51,5 +53,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims(){
        return [];
     }
-
+    public function cart(){
+      return $this->hasOne(Carts::class);
+    }
+    public function order(){
+       return $this->hasMany(OrdersTable::class);
+    }
 }

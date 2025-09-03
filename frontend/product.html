@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechMarket - Детали товара</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<style>
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #64748b;
+    --accent: #f59e0b;
+    --light: #f8fafc;
+    --dark: #1e293b;
+    --success: #10b981;
+    --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e6e6ff 100%);
+    color: var(--dark);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dark);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.nav-link:hover {
+    background: #f1f5f9;
+    color: var(--primary);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    width: 100%;
+    /* overflow: hidden;  ⛔ убрал, мешало прокрутке */
+}
+
+.product-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+
+    display: flex;                /* ✅ карточки по центру */
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+}
+
+.loading {
+    text-align: center;
+    padding: 100px 20px;
+    font-size: 18px;
+    color: var(--secondary);
+}
+
+.loading i {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: var(--primary);
+}
+
+.error {
+    text-align: center;
+    padding: 100px 20px;
+    color: #ef4444;
+}
+
+.error i {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.product-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: var(--card-shadow);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Галерея изображений */
+.product-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.main-image {
+    width: 100%;
+    height: 400px;
+    background: var(--light);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    touch-action: pan-y; /* Разрешаем только вертикальный скролл */
+}
+
+.main-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    pointer-events: none; /* Запрещаем взаимодействие с изображением */
+}
+
+.image-thumbnails {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px 0;
+    scrollbar-width: thin;
+    touch-action: pan-x; /* Разрешаем горизонтальный скролл только для миниатюр */
+}
+
+.image-thumbnails::-webkit-scrollbar {
+    height: 4px;
+}
+
+.image-thumbnails::-webkit-scrollbar-thumb {
+    background: var(--secondary);
+    border-radius: 2px;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    cursor: pointer;
+    object-fit: cover;
+    border: 2px solid transparent;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+    border-color: var(--primary);
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    touch-action: pan-y;
+}
+
+.product-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--dark);
+    line-height: 1.2;
+}
+
+.product-price {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.product-description {
+    color: var(--secondary);
+    line-height: 1.8;
+    margin: 20px 0;
+}
+
+/* ⛔ убрал product-specs (В наличии, Гарантия) */
+
+.product-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 15px 25px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    cursor: pointer;
+    border: none;
+    font-size: 16px;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    flex: 1;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secondary {
+    background: var(--light);
+    color: var(--dark);
+    border: 2px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+main.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Footer */
+footer {
+    background: var(--dark);
+    color: white;
+    padding: 50px 0 20px;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 30px auto 0;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #334155;
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .product-content {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        margin: 0 10px;
+    }
+
+    .product-title {
+        font-size: 24px;
+    }
+
+    .product-actions {
+        flex-direction: column;
+    }
+
+    .main-image {
+        height: 300px;
+    }
+
+    .thumbnail {
+        width: 60px;
+        height: 60px;
+    }
+
+    .product-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .nav-container {
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        padding: 10px;
+    }
+
+    .nav-links {
+        margin-top: 2px;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .nav-links .nav-link {
+        margin-top: -12px;
+    }
+}
+</style>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="nav-container">
+            <a href="home.html" class="logo">
+                <i class="fas fa-laptop-code"></i>
+                <span>TechMarket</span>
+            </a>
+            
+            <div class="nav-links">
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Главная</span>
+                </a>
+                <a href="cart.html" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i>
+		    <span>Корзина</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="product-container">
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Загрузка товара...</p>
+            </div>
+
+            <div id="error" class="error" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Ошибка загрузки товара</h3>
+                <p>Попробуйте обновить страницу</p>
+            </div>
+
+            <div id="product-content" class="product-content" style="display: none;">
+                <!-- Product details will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>TechMarket</h3>
+                <p>Сделано с целью обучения</p>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Контакты</h3>
+                <ul class="footer-links">
+                    <li><i class="fas fa-phone"></i> +7 (777) 123-45-67</li>
+                    <li><i class="fas fa-envelope"></i> info@techmarket.kz</li>
+                    <li><i class="fas fa-map-marker-alt"></i> г. Алматы</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 TechMarket.</p>
+        </div>
+    </footer>
+
+<script>
+class ProductPage {
+    constructor() {
+        this.productId = this.getProductIdFromUrl();
+        this.token = localStorage.getItem('token');
+        this.currentImageIndex = 0;
+        this.init();
+    }
+
+    getProductIdFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id');
+    }
+
+    async init() {
+        if (!this.productId) {
+            this.showError('ID товара не указан');
+            return;
+        }
+
+        if (!this.token) {
+            this.showError('Требуется авторизация');
+            return;
+        }
+
+        await this.loadProduct();
+        
+    }
+
+async loadProduct() {
+    try {
+        this.showLoading();
+
+        // Используем правильный эндпоинт для получения товара
+        const response = await fetch(`http://localhost:8000/api/product/${this.productId}`, {
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки данных товара');
+        }
+
+        const productData = await response.json();
+        
+        // Проверяем структуру ответа (desctiprion с опечаткой или description?)
+        const product = productData.desctiprion || productData.description || productData;
+        
+        if (!product) {
+            throw new Error('Товар не найден');
+        }
+
+        this.renderProduct(product);
+
+    } catch (error) {
+        console.error('Ошибка загрузки товара:', error);
+        this.showError('Не удалось загрузить информацию о товаре');
+    }
+}   
+
+
+renderProduct(product) {
+    const images = product.img__connect || [];
+    const uniqueImages = this.removeDuplicateImages(images);
+    const firstImage = uniqueImages.length > 0 ? uniqueImages[0].path : 'images/default-product.png';
+    
+    // Получаем описание из desc__connect или используем fallback
+    const description = product.desc__connect?.desc || 
+                       'Высококачественный продукт с отличными характеристиками. Идеальное сочетание функциональности и стиля.';
+
+    const content = `
+        <div class="product-gallery">
+            <div class="main-image">
+                <img src="http://localhost:8000/${firstImage}"
+                     alt="${product.name}"
+                     id="main-product-image"
+                     onerror="this.src='https://via.placeholder.com/400x400?text=Нет+изображения'">
+            </div>
+
+            ${uniqueImages.length > 1 ? `
+            <div class="image-thumbnails">
+                ${uniqueImages.map((img, index) => `
+                    <img src="http://localhost:8000/${img.path}"
+                         alt="${product.name} - ${index + 1}"
+                         class="thumbnail ${index === 0 ? 'active' : ''}"
+                         onclick="productPage.changeImage(${index})"
+                         onerror="this.style.display='none'">
+                `).join('')}
+            </div>
+            ` : ''}
+        </div>
+
+        <div class="product-info">
+            <h1 class="product-title">${product.name}</h1>
+            <div class="product-price">${product.price} ₸</div>
+            
+            <div class="product-description">
+                <p>${description}</p>
+            </div>
+            
+            <div class="product-specs">
+                <h3>Характеристики:</h3>
+                <div class="spec-item">
+                    <span>Бренд:</span>
+                    <span>${product.name.split(' ')[0]}</span>
+                </div>
+                <div class="spec-item">
+                    <span>Модель:</span>
+                    <span>${product.name}</span>
+                </div>
+                <div class="spec-item">
+                    <span>Цена:</span>
+                    <span>${product.price} ₸</span>
+                </div>
+                <div class="spec-item">
+                    <span>В наличии:</span>
+                    <span>Да</span>
+                </div>
+                <div class="spec-item">
+                    <span>Гарантия:</span>
+                    <span>12 месяцев</span>
+                </div>
+            </div>
+            
+            <div class="product-actions">
+                <button class="btn btn-primary add-to-cart-btn" data-product-id="${product.id}">
+                    <i class="fas fa-shopping-cart"></i> Добавить в корзину
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-heart"></i> В избранное
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('product-content').innerHTML = content;
+    this.hideLoading();
+    document.getElementById('product-content').style.display = 'grid';
+    
+    this.productImages = uniqueImages;
+    this.setupAddToCart();
+}
+    setupAddToCart() {
+        const addToCartBtn = document.querySelector('.add-to-cart-btn');
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', () => {
+                const productId = addToCartBtn.getAttribute('data-product-id');
+                this.addToCart(productId);
+            });
+        }
+    }
+
+    async addToCart(productId) {
+        try {
+            const addToCartBtn = document.querySelector('.add-to-cart-btn');
+            const originalText = addToCartBtn.innerHTML;
+            
+            // Показываем загрузку
+            addToCartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Добавляем...';
+            addToCartBtn.disabled = true;
+
+            const response = await fetch('http://localhost:8000/api/cart/items/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: parseInt(productId)
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка добавления в корзину');
+            }
+
+            const result = await response.json();
+            
+            // Показываем успех
+            addToCartBtn.innerHTML = '<i class="fas fa-check"></i> Добавлено!';
+            addToCartBtn.style.background = 'var(--success)';
+            
+            // Восстанавливаем через 2 секунды
+            setTimeout(() => {
+                addToCartBtn.innerHTML = originalText;
+                addToCartBtn.style.background = '';
+                addToCartBtn.disabled = false;
+            }, 2000);
+
+            this.showNotification('Товар добавлен в корзину! 🛒');
+
+        } catch (error) {
+            console.error('Ошибка добавления в корзину:', error);
+            
+            const addToCartBtn = document.querySelector('.add-to-cart-btn');
+            addToCartBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Добавить в корзину';
+            addToCartBtn.disabled = false;
+            
+            this.showNotification('Ошибка добавления в корзину', 'error');
+        }
+    }
+
+    showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            background: ${type === 'success' ? 'var(--success)' : 'var(--danger)'};
+            box-shadow: var(--card-shadow);
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    removeDuplicateImages(images) {
+        const seen = new Set();
+        return images.filter(img => {
+            if (seen.has(img.path)) {
+                return false;
+            }
+            seen.add(img.path);
+            return true;
+        });
+    }
+
+    changeImage(index) {
+        this.currentImageIndex = index;
+        const mainImage = document.getElementById('main-product-image');
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        
+        if (this.productImages[index]) {
+            mainImage.src = `http://localhost:8000/${this.productImages[index].path}`;
+        }
+        
+        thumbnails.forEach((thumb, i) => {
+            thumb.classList.toggle('active', i === index);
+        });
+    }
+
+    showLoading() {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('product-content').style.display = 'none';
+    }
+
+    hideLoading() {
+        document.getElementById('loading').style.display = 'none';
+    }
+
+    showError(message) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('product-content').style.display = 'none';
+        
+        if (message) {
+            document.getElementById('error').querySelector('h3').textContent = message;
+        }
+    }
+}
+
+// Initialize the product page
+let productPage;
+document.addEventListener('DOMContentLoaded', () => {
+    productPage = new ProductPage();
+});
+
+    </script>
+</body>
+</html>

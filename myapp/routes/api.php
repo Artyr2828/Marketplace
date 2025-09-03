@@ -6,6 +6,8 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductPageController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,5 +32,9 @@ Route::middleware('auth:api')->group(function(){
      Route::get('/home', [HomeController::class, 'getDataHomePage']);
      Route::get('/home/search', [HomeController::class, 'search']);
      Route::get('/product/{id}', [ProductPageController::class, 'show']);
-   }
-);
+     Route::post('/cart/items', [CartController::class, 'addToCart']);
+     Route::get('/cart', [CartController::class, 'getToCart']);
+     Route::patch('/cart/items/{ItemId}', [CartController::class, 'changeQuantity']);
+     Route::delete('/cart/items/{ItemId}', [CartController::class, 'deleteItem']);
+     Route::post('/orders', [OrderController::class, 'store']);
+   });

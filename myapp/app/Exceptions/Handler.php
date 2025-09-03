@@ -21,6 +21,34 @@ class Handler extends ExceptionHandler
      return response()->json(['statys'=>'error', 'error'=>$exception->getMessage()],500, [], JSON_UNESCAPED_UNICODE);
     }
 
+
+ /* public function render($request, Throwable $exception)
+{
+    // Логируем все ошибки
+    \Log::error($exception);
+
+    // Пользовательские исключения
+    if ($exception instanceof VerificationCodeAlreadySentException) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Код уже был отправлен'
+        ], 400, [], JSON_UNESCAPED_UNICODE);
+    }
+
+    if ($exception instanceof InvalidEmailCodeException) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Неверный код'
+        ], 400, [], JSON_UNESCAPED_UNICODE);
+    }
+
+    // Все остальные ошибки — нейтральное сообщение для пользователя
+    return response()->json([
+        'status' => 'error',
+        'message' => 'Произошла ошибка, попробуйте позже'
+    ], 500, [], JSON_UNESCAPED_UNICODE);
+}
+*/
   protected function unauthenticated($request, AuthenticationException $e){
      if ($request->expectsJson()){
        return response()->api(["status"=>"AuthorizationUser"]);

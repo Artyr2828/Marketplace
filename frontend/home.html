@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechMarket - Маркетплейс техники</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #64748b;
+      --accent: #f59e0b;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --success: #10b981;
+      --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e6e6ff 100%);
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header & Navigation */
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 80px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .logo i {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--dark);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 15px;
+      border-radius: 10px;
+      transition: var(--transition);
+    }
+
+    .nav-link:hover {
+      background: #f1f5f9;
+      color: var(--primary);
+    }
+
+    .nav-link i {
+      font-size: 18px;
+    }
+
+    .cart-count {
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(120deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    .search-bar {
+      max-width: 500px;
+      margin: 0 auto;
+      display: flex;
+      background: white;
+      border-radius: 50px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-bar input {
+      flex: 1;
+      border: none;
+      padding: 15px 20px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .search-bar button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .search-bar button:hover {
+      background: #e69008;
+    }
+
+    /* Main Content */
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .section-title {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: var(--dark);
+      text-align: center;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    /* Product Grid */
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    /* Product Card */
+    .card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-img-container {
+      height: 220px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      position: relative;
+    }
+
+    .card img {
+      max-width: 100%;
+      max-height: 180px;
+      object-fit: contain;
+      transition: var(--transition);
+    }
+
+    .card:hover img {
+      transform: scale(1.05);
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--accent);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .card-content {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-content h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: var(--dark);
+    }
+
+    .card-price {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 10px 0;
+    }
+
+    .card-rating {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+
+    .card-rating i {
+      color: #fbbf24;
+      font-size: 14px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      cursor: pointer;
+      border: none;
+      font-size: 15px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-icon {
+      background: #f1f5f9;
+      color: var(--dark);
+      padding: 12px;
+    }
+
+    .btn-icon:hover {
+      background: #e2e8f0;
+    }
+
+    /* Loading and empty states */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+      color: var(--secondary);
+    }
+
+    .loading i {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--secondary);
+    }
+
+    .no-results i {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: #cbd5e1;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--dark);
+      color: white;
+      padding: 150px 0 100px;
+      margin-top: 100px;
+    }
+
+    .footer-content {
+      max-width: 1900px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+
+    .footer-column h3 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #f8fafc;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 12px;
+    }
+
+    .footer-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 30px auto 0;
+      padding: 20px;
+      text-align: center;
+      border-top: 1px solid #334155;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+      }
+      
+      .nav-links {
+        margin-top: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .container {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Navigation -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <i class="fas fa-laptop-code"></i>
+        <span>TechMarket</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="#" class="nav-link">
+          <i class="fas fa-home"></i>
+          <span>Главная</span>
+        </a>
+        <a href="#" class="nav-link">
+          <i class="fas fa-box"></i>
+          <span>Каталог</span>
+        </a>
+        <a href="#" class="nav-link">
+          <i class="fas fa-percentage"></i>
+          <span>Акции</span>
+        </a>
+        <a href="#" class="nav-link">
+          <i class="fas fa-user"></i>
+          <span>Профиль</span>
+        </a>
+        <a href="cart.html" class="nav-link">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Корзина</span>
+          
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Качественная техника уже сегодня</h1>
+      <p>Широкий выбор smartphones, ноутбуков, планшетов и аксессуаров по лучшим ценам</p>
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Поиск товаров..." onkeypress="handleSearchKeypress(event)">
+        <button onclick="performSearch()">
+          <i class="fas fa-search"></i> Найти
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="main-container">
+    <h2 class="section-title" id="products-title">Популярные товары</h2>
+    
+    <div class="container" id="product-list">
+      <div class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Загрузка товаров...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-column">
+        <h3>TechMarket</h3>
+        <p>маркетплейс техники разработанный в 2025 года. Мы предлагаем широкий ассортимент качественной электроники.</p>
+      </div>
+      
+      <div class="footer-column">
+        <h3>Категории</h3>
+        <ul class="footer-links">
+          <li><a href="#">Смартфоны</a></li>
+          <li><a href="#">Ноутбуки</a></li>
+          <li><a href="#">Планшеты</a></li>
+          <li><a href="#">Аксессуары</a></li>
+          <li><a href="#">Гаджеты</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column">
+        <h3>Помощь</h3>
+        <ul class="footer-links">
+          <li><a href="#">О нас</a></li>
+          <li><a href="#">Доставка</a></li>
+          <li><a href="#">Оплата</a></li>
+          <li><a href="#">Гарантия</a></li>
+          <li><a href="#">Контакты</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column">
+        <h3>Контакты</h3>
+        <ul class="footer-links">
+          <li><i class="fas fa-phone"></i> +7 (777) 123-45-67</li>
+          <li><i class="fas fa-envelope"></i> info@techmarket.kz</li>
+          <li><i class="fas fa-map-marker-alt"></i> г. Алматы, ул. Техническая 42</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2023 TechMarket. Все права защищены.</p>
+    </div>
+  </footer>
+
+<script>
+let currentSearchQuery = '';
+let allProducts = [];
+
+// Функция для загрузки всех товаров
+async function loadProducts() {
+    try {
+        showLoading();
+
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:8000/api/home", {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Ошибка загрузки товаров");
+        }
+
+        const products = await response.json();
+        allProducts = products;
+
+        displayProducts(products);
+        updateProductsTitle('Популярные товары');
+
+    } catch (error) {
+        console.error("Ошибка:", error);
+        showError("Ошибка загрузки товаров");
+    }
+}
+
+// Функция для поиска товаров через API
+async function searchProducts(query) {
+    try {
+        showLoading();
+        
+        const token = localStorage.getItem("token");
+        const response = await fetch(`http://localhost:8000/api/home/search?search=${encodeURIComponent(query)}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Ошибка поиска товаров");
+        }
+
+        const searchData = await response.json();
+        const products = searchData.product || searchData.products || [];
+        
+        displayProducts(products);
+        updateProductsTitle(`Результаты поиска: "${query}"`);
+
+    } catch (error) {
+        console.error("Ошибка поиска:", error);
+        
+        // Fallback: локальный поиск по уже загруженным товарам
+        const localResults = allProducts.filter(item => 
+            item.name.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        displayProducts(localResults);
+        updateProductsTitle(`Результаты поиска: "${query}"`);
+    }
+}
+
+// Функция для выполнения поиска
+function performSearch() {
+    const searchInput = document.getElementById('search-input');
+    const query = searchInput.value.trim();
+    
+    if (query) {
+        currentSearchQuery = query;
+        searchProducts(query);
+    } else {
+        // Если поисковый запрос пустой, показываем все товары
+        currentSearchQuery = '';
+        displayProducts(allProducts);
+        updateProductsTitle('Популярные товары');
+    }
+}
+
+// Обработка нажатия Enter в поле поиска
+function handleSearchKeypress(event) {
+    if (event.key === 'Enter') {
+        performSearch();
+    }
+}
+
+function displayProducts(products) {
+    const container = document.getElementById('product-list');
+
+    if (!products || products.length === 0) {
+        container.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                <h3>Товары не найдены</h3>
+                <p>Попробуйте изменить поисковый запрос</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = products.map(item => {
+        // Берем первое изображение из массива img__connect
+        const firstImage = item.img__connect && item.img__connect.length > 0
+            ? item.img__connect[0].path
+            : 'images/default-product.png';
+
+        return `
+            <div class="card">
+                <div class="card-img-container">
+                    <img src="http://localhost:8000/${firstImage}" alt="${item.name}"
+                         onerror="this.src='https://via.placeholder.com/300x300?text=Нет+изображения'">
+                    <div class="card-badge">Популярный</div>
+                </div>
+                <div class="card-content">
+                    <h3>${item.name}</h3>
+                    <div class="card-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>(128)</span>
+                    </div>
+                    <div class="card-price">${item.price} ₸</div>
+                    <div class="card-actions">
+                        <a href="product.html?id=${item.id}" class="btn btn-primary">
+                            <i class="fas fa-shopping-cart"></i> Купить
+                        </a>
+                        <button class="btn btn-icon" onclick="addToCart(${item.id})">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Обновление заголовка раздела
+function updateProductsTitle(title) {
+    document.getElementById('products-title').textContent = title;
+}
+
+// Показать состояние загрузки
+function showLoading() {
+    const container = document.getElementById('product-list');
+    container.innerHTML = `
+        <div class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Загрузка...</p>
+        </div>
+    `;
+}
+
+// Показать ошибку
+function showError(message) {
+    const container = document.getElementById('product-list');
+    container.innerHTML = `
+        <div class="no-results">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>${message}</h3>
+            <p>Попробуйте обновить страницу</p>
+        </div>
+    `;
+}
+
+// Функция для добавления в корзину
+async function addToCart(productId) {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Требуется авторизация');
+            return;
+        }
+
+        const response = await fetch('http://localhost:8000/api/cart/items/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                product_id: productId
+            })
+        });
+
+        if (response.ok) {
+            alert('Товар добавлен в корзину!');
+        } else {
+            throw new Error('Ошибка добавления в корзину');
+        }
+
+    } catch (error) {
+        console.error('Ошибка добавления в корзину:', error);
+        alert('Не удалось добавить товар в корзину');
+    }
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadProducts();
+
+    // Восстановление поискового запроса если он был
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('q');
+    if (searchQuery) {
+        document.getElementById('search-input').value = searchQuery;
+        searchProducts(searchQuery);
+    }
+});
+  </script>
+</body>
+</html>
