@@ -31,7 +31,7 @@ class OrderControllerTest extends TestCase
         $response = $this->post('/api/orders', [
             'product_id'=>3,
             'address'=>'Пушкина',
-            'phone'=>'+8891919',
+            'phone'=>'+7828828892',
             'quantity'=>3
         ]);
         $response->dump();

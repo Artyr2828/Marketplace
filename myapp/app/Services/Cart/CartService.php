@@ -31,8 +31,7 @@ class CartService{
      //Берем item пользователя(может быть null)
      $user = auth()->user();
      $cart = $user->cart()->firstOrCreate();
-    // $this->checkCart->check($cart);
-       $this->checkNotNull->check($cart, "Корзина пуста");
+     $this->checkNotNull->check($cart, "Корзина пуста");
      $item = $cart->items()->where('product_id', $productId)->first();
 
 

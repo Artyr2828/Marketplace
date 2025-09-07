@@ -37,4 +37,5 @@ Route::middleware('auth:api')->group(function(){
      Route::patch('/cart/items/{ItemId}', [CartController::class, 'changeQuantity']);
      Route::delete('/cart/items/{ItemId}', [CartController::class, 'deleteItem']);
      Route::post('/orders', [OrderController::class, 'store']);
+     Route::get('/orders/order_items', [OrderController::class, 'getOrderItems']);
    });

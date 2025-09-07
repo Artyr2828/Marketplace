@@ -17,7 +17,7 @@ class UserRegistrationService implements UserRegistrationInterface{
           'name'=>$data['name'],
           'email'=>$data['email'],
           'password'=>$data['password'],
-           'email_verified_at'=>null
+          'email_verified_at'=>null
       ]);
     }
 

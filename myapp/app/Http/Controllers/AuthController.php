@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Interfaces\AuthenticationServiceInterface;
-
+use App\Models\User;
+use Exception;
 class AuthController extends Controller
 {
     private $authenticationJWT;
@@ -12,10 +13,20 @@ class AuthController extends Controller
        $this->authenticationJWT = $authenticationJWT;
     }
 
-
+    /**
+ * Аутентификация пользователя
+ * @param LoginRequest $r специальный Request для валидации полученных данных
+ * @return JSON
+ * **/
     public function login(LoginRequest $r){
-      $credentails =  $r->only('email','password');
-      $token = $this->authenticationJWT->authentication($credentails);
+      $email = $r->email;
+      $user = User::where('email', $email)->first();
+      //Проверяем подтвержден ли емэйл
+      $this->authenticationJWT->EnsureEmailIsVerified($user);
+      //забираем нужные данные
+      $credentials =  $r->only('email','password');
+      //Получаем JWT Токее
+      $token = $this->authenticationJWT->authentication($credentials);
       //для тестов
       error_log($token);
       /** @var \Tymon\JWTAuth\JWTGuard $auth */

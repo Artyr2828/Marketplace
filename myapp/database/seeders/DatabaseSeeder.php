@@ -8,6 +8,7 @@ use Database\Seeders\ProductsTableSeeder;
 use Database\Seeders\ImgPathSeeder;
 use Database\Seeders\ProductImageSeeder;
 use Database\Seeders\DescSeeder;
+use Database\Seeders\Roles;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -21,8 +22,9 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        $this->call(ProductsTableSeeder::class);
-        $this->call(ImgPathSeeder::class);
-        $this->call(DescSeeder::class);
+        //$this->call(ProductsTableSeeder::class);
+        //$this->call(ImgPathSeeder::class);
+        //$this->call(DescSeeder::class);
+        $this->call(Roles::class);
     }
 }

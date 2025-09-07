@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\Role;
 use Mockery;
 class RegistrationControllerTest extends TestCase
 {
@@ -15,6 +16,7 @@ use RefreshDatabase;
     public function test_handle_post(): void
     {
 
+Role::factory()->create();
         $response = $this->post('/api/register', [
            'name'=>'Artyr',
            'email'=>'nikololi@gmail.com',

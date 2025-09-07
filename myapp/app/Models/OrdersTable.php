@@ -19,7 +19,7 @@ class OrdersTable extends Model
     ];
 
     //Подключяем "предметы" заказа
-    public function orderItem(){
+    public function orderItems(){
       return $this->hasMany(OrderItem::class, 'order_id', 'id');
     }
 }

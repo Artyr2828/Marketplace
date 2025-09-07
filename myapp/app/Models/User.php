@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Models\Carts;
+use App\Models\Role;
 use App\Models\OrdersTable;
 class User extends Authenticatable implements JWTSubject
 {
@@ -24,6 +25,10 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+    ];
+
+    protected $attributes = [
+       'role_id'=>1
     ];
 
     /**
@@ -59,4 +64,7 @@ class User extends Authenticatable implements JWTSubject
     public function order(){
        return $this->hasMany(OrdersTable::class);
     }
+    public function role(){
+         return $this->belongsTo(OrdersTable::class);
+      }
 }

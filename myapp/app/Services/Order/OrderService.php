@@ -3,7 +3,7 @@ namespace App\Services\Order;
 use App\Models\Product;
 use App\Services\Order\CheckNotNull;
 use App\Services\Order\OrderRequiredValidate;
-
+use App\Models\OrderItem;
 class OrderService{
     private $checkNotNull;
     private $orderRequiredValidate;
@@ -39,7 +39,7 @@ class OrderService{
         ]);
 
         //Добавляем предметы в заказе
-        $order->orderItem()->firstOrCreate([
+        $order->orderItems()->firstOrCreate([
             'product_id'=>$productId,
              'price'=>$product->price,
              'quantity'=>1
