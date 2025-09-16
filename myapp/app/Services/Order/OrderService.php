@@ -21,7 +21,7 @@ class OrderService{
  *
  */
 
-    public function store(int $productId, string $address, string $phone){
+    public function store(int $productId, string $address, string $phone, string $comment){
         //Берем Пользователя
         $user = auth()->user();
         //Берем продукт который будем добавлять в "заказы"(может быть null)
@@ -33,9 +33,10 @@ class OrderService{
         $quantity = $user->cart->items()->where('product_id', $productId);
 
         //Делаем Заказ(может быть null)
-        $order = $user->order()->firstOrCreate([
+        $order = $user->order()->create([
            'address'=>$address,
-           'phone'=>$phone
+           'phone'=>$phone,
+           'comment'=>$comment
         ]);
 
         //Добавляем предметы в заказе

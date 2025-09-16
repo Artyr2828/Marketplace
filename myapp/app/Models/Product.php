@@ -8,7 +8,7 @@ use App\Models\ImgPath;
 use App\Models\DescriptionProduct;
 use App\Models\CartItems;
 use App\Models\OrderItem;
-
+use App\Models\User;
 class Product extends Model
 {
     use HasFactory;
@@ -34,5 +34,8 @@ class Product extends Model
 
   public function orderItem(){
     return $this->belongsTo(OrderItem::class);
+  }
+  public function user(){
+     return $this->belongsTo(User::class);
   }
 }

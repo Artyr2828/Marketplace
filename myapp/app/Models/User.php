@@ -11,6 +11,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Models\Carts;
 use App\Models\Role;
 use App\Models\OrdersTable;
+use App\Models\Product;
+use App\Models\ImgPathProfile;
 class User extends Authenticatable implements JWTSubject
 {
 
@@ -66,5 +68,11 @@ class User extends Authenticatable implements JWTSubject
     }
     public function role(){
          return $this->belongsTo(OrdersTable::class);
-      }
+    }
+    public function products(){
+        return $this->hasMany(Product::class);
+    }
+    public function image(){
+       return $this->hasOne(ImgPathProfile::class);
+    }
 }

@@ -14,6 +14,7 @@ class OrdersTable extends Model
     protected $fillable = [
        'user_id',
        'address',
+       'comment',
        'phone',
        'status'
     ];

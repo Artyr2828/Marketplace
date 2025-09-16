@@ -30,6 +30,7 @@ class RegistrationController extends Controller
       //если нет то добавляем
       $user = $this->userRegistrationService->addUserInDb($dataUser);
       //ставим задачу на через пять минут удалить пользователя если емэйл не подтвержден
+      error_log("User: " . print_r($user, true));
       DeleteUserJob::dispatch($user->id)->delay(now()->addMinute(5));
       //отправляем код подтверждения
       $this->emailVerificationService->sendVerificationCodeToEmail($r->email, 300);

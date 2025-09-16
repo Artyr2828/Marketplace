@@ -56,8 +56,8 @@ class CartService{
         //Изменяем
         $updatedItem = $this->changeQuantity->change($item, $dataQuantity);
 
-          //Сохраняем Изменения
-          $updatedItem->save();
+        //Сохраняем Изменения
+        $updatedItem->save();
    }
 
    //Удаляем Товар Из Корзины

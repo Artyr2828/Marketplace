@@ -20,6 +20,7 @@ class AuthController extends Controller
  * **/
     public function login(LoginRequest $r){
       $email = $r->email;
+      //Берем пользователя(может быть null если не найден)
       $user = User::where('email', $email)->first();
       //Проверяем подтвержден ли емэйл
       $this->authenticationJWT->EnsureEmailIsVerified($user);

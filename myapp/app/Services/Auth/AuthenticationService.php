@@ -28,7 +28,10 @@ class AuthenticationService implements AuthenticationServiceInterface{
  * @param User $user зарегестрированный пользователь
  * @throws Exception исключения если у пользователя не подтвержден email
   **/
-  public function EnsureEmailIsVerified(User $user): void{
+  public function EnsureEmailIsVerified(?User $user): void{
+        if ($user === null){
+            throw new \Exception("Данного пользователя не существует");
+        }
         if ($user->email_verified_at === null){                                        throw new \Exception("вы не можете войти в этот аккаунт, пользова
   тель не подтвержден");
         }

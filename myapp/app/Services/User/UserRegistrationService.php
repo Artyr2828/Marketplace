@@ -13,12 +13,16 @@ class UserRegistrationService implements UserRegistrationInterface{
     }
 
    public function addUserInDb(array $data){
-     return  User::create([
+
+     $user = User::create([
           'name'=>$data['name'],
           'email'=>$data['email'],
           'password'=>$data['password'],
           'email_verified_at'=>null
       ]);
+      $user->image()->create();
+      return $user;
+
     }
 
    public function getUser(string $email):object{

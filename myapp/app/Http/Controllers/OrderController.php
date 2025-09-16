@@ -21,7 +21,7 @@ class OrderController extends Controller
  **/
 
     public function store(StoreOrderRequest $r){
-       $this->orderService->store($r->product_id, $r->address, $r->phone);
+       $this->orderService->store($r->product_id, $r->address, $r->phone, $r->comment);
        return response()->api(['status'=>'ok']);
     }
 

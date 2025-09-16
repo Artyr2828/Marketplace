@@ -12,8 +12,9 @@ return new class extends Migration
     {
        Schema::create("description_product", function (Blueprint $table){
     $table->id();
-    $table->integer("product_id");
+    $table->foreignId('product_id')->constrained()->cascadeOnDelete();
     $table->text("desc");
+    $table->timestamps();
 });
     }
 

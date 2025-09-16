@@ -9,7 +9,6 @@ use Illuminate\Http\UploadedFile;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use App\Services\Admin\AdminPanelService;
-use App\Models\OrderItem;
 
 class AdminPanelController extends Controller
 {
@@ -62,7 +61,6 @@ class AdminPanelController extends Controller
  * Отдаем все заказы пользователей
    **/
     public function getOrders(){
-      $orders = OrderItem::all();
-      return response()->api($orders->toArray());
+       //
     }
 }

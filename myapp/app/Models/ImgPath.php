@@ -15,8 +15,8 @@ class ImgPath extends Model
        'path'
     ];
 
-
     public function productConnect(){
        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
+
 }

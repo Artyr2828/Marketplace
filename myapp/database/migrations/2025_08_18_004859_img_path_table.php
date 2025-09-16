@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('img_path', function(Blueprint $table){
             $table->id();
-            $table->integer('product_id');
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->string('path');
+            $table->timestamps();
         });
     }
 

@@ -8,6 +8,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductPageController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AdminPanelController;
+use App\Http\Controllers\ProfileController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -38,4 +41,8 @@ Route::middleware('auth:api')->group(function(){
      Route::delete('/cart/items/{ItemId}', [CartController::class, 'deleteItem']);
      Route::post('/orders', [OrderController::class, 'store']);
      Route::get('/orders/order_items', [OrderController::class, 'getOrderItems']);
+     Route::get('/admin', [AdminPanelController::class, 'getProductItems']);
+     Route::post('/admin/product-store', [AdminPanelController::class, 'store']);
+     Route::get('/profile', [ProfileController::class, 'getDataUser']);
+     Route::get('/admin/orders', [AdminPanelController::class, 'getOrders']);
    });

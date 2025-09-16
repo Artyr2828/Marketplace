@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table){
+        Schema::create('img_profile', function(Blueprint $table){
            $table->id();
            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-           $table->string('address');
-           $table->string('phone');
-           $table->text("comment")->nullable();
-           $table->string('status')->default('pending');
-           $table->timestamp('created_at');
-           $table->timestamp('updated_at');
+           $table->string('path')->default('noImage');
+           $table->timestamps();
         });
     }
 
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('img_profile');
     }
 };
