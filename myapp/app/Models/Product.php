@@ -20,7 +20,7 @@ class Product extends Model
 
 
   public function img_Connect(){
-    return $this->hasMany(ImgPath::class, 'product_id');
+    return $this->hasMany(ImgPath::class, 'product_id', 'id');
   }
 
 
@@ -32,8 +32,8 @@ class Product extends Model
     return $this->hasMany(CartItems::class);
   }
 
-  public function orderItem(){
-    return $this->belongsTo(OrderItem::class);
+  public function orderItems(){
+    return $this->hasMany(OrderItem::class, 'order_id');
   }
   public function user(){
      return $this->belongsTo(User::class);

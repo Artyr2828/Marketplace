@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechMarket - Оформление заказа</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --accent: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e6e6ff 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+/* Header */
+          header {
+              background: rgba(255, 255, 255, 0.95);
+              backdrop-filter: blur(10px);
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+              position: sticky;
+              top: 0;
+              z-index: 100;
+          }
+
+          .nav-container {
+              max-width: 1200px;
+              margin: 0 auto;
+              padding: 0 20px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              height: 80px;
+          }
+
+          .logo {
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              font-size: 24px;
+              font-weight: 700;
+              color: var(--primary);
+              text-decoration: none;
+          }
+
+          .nav-links {
+              display: flex;
+              gap: 30px;
+              align-items: center;
+          }
+
+          .nav-link {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: var(--dark);
+              text-decoration: none;
+              font-weight: 500;
+              padding: 10px 15px;
+              border-radius: 10px;
+              transition: var(--transition);
+          }
+
+          .nav-link.active {
+              background: var(--primary);
+              color: white;
+          }
+
+          .nav-link:hover {
+              background: #f1f5f9;
+              color: var(--primary);
+          }
+        /* Main Content */
+        .order-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+            font-size: 18px;
+            color: var(--secondary);
+        }
+
+        .loading i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .error {
+            text-align: center;
+            padding: 100px 20px;
+            color: var(--danger);
+        }
+
+        .error i {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--secondary);
+        }
+
+        .empty-cart i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #cbd5e1;
+        }
+
+        /* Order Layout */
+.order-layout {
+    display: grid;
+    grid-template-columns: 1fr minmax(280px, 400px);
+    gap: 20px;
+}
+        /* Order Form */
+        .order-form {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .form-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--dark);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-input.error {
+            border-color: var(--danger);
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .order-items {
+            margin-bottom: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 25px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #0da271;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        /* Success Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-icon {
+            font-size: 64px;
+            color: var(--success);
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .modal-text {
+            color: var(--secondary);
+            margin-bottom: 25px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+@media (max-width: 768px) {
+    .order-layout {
+        grid-template-columns: 1fr; /* одна колонка */
+    }
+
+    .order-summary {
+        position: static;
+        order: 2; /* корзина идёт ниже */
+    }
+
+    .order-form {
+        order: 1; /* форма выше */
+    }
+}
+        @media (max-width: 640px) {
+            .order-container {
+                padding: 15px;
+            }
+            
+            .page-title {
+                font-size: 28px;
+            }
+            
+            .order-form, .order-summary {
+                padding: 20px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+            }
+        }
+
+
+
+	/* Responsive */
+  @media (max-width: 768px) {
+      /* Header */
+      .nav-container {
+          flex-direction: column;                                                                                               height: auto;
+          padding: 15px;
+          gap: 15px;
+      }
+
+      .nav-links {
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 10px;
+      }
+
+      .nav-link {
+          padding: 8px 12px;
+          font-size: 14px;
+      }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+<header>
+          <div class="nav-container">                                           <a href="home.html" class="logo">
+        <i class="fas fa-laptop-code"></i>
+                  <span>TechMarket</span>
+              </a>
+
+              <div class="nav-links">
+                  <a href="home.html" class="nav-link">
+            <i class="fas fa-home"></i>
+                      <span>Главная</span>
+                  </a>                                                              <a href="cart.html" class="nav-link">
+       <i class="fas fa-shopping-cart"></i>
+                      <span>Корзина</span>
+                  </a>
+                  <a href="order-history.html" class="nav-link act  ive">
+       <i class="fas fa-history"></i>
+       <span>Мои заказы</span></a>
+              </div>
+          </div>
+      </header>
+    <!-- Main Content -->
+    <div class="order-container">
+        <h1 class="page-title">✅ Оформление заказа</h1>
+        
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Загрузка данных...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Ошибка загрузки</h3>
+            <p>Попробуйте обновить страницу</p>
+        </div>
+
+        <div id="empty-cart" class="empty-cart" style="display: none;">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>Корзина пуста</h3>
+            <p>Добавьте товары, чтобы сделать заказ</p>
+            <a href="home.html" class="btn btn-primary">
+                <i class="fas fa-shopping-bag"></i> Перейти к покупкам
+            </a>
+        </div>
+
+        <div id="order-content" class="order-layout" style="display: none;">
+            <!-- Форма заказа -->
+            <div class="order-form">
+                <h2 class="form-title">Данные для доставки</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Адрес доставки *</label>
+                    <input type="text" id="address" class="form-input" placeholder="Улица, дом, квартира" required>
+                    <div class="error-message" id="address-error">Пожалуйста, укажите адрес</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Телефон *</label>
+                    <input type="tel" id="phone" class="form-input" placeholder="+7 (999) 999-99-99" required>
+                    <div class="error-message" id="phone-error">Пожалуйста, укажите телефон</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Комментарий к заказу</label>
+                    <textarea id="comment" class="form-input" placeholder="Особенности доставки, пожелания..." rows="4"></textarea>
+                </div>
+
+                <button id="submit-order" class="submit-btn">
+                    <i class="fas fa-check"></i> Подтвердить заказ
+                </button>
+            </div>
+
+            <!-- Информация о заказе -->
+            <div class="order-summary">
+                <h3 class="summary-title">Ваш заказ</h3>
+                
+                <div class="order-items" id="order-items">
+                    <!-- Товары будут здесь -->
+                </div>
+
+                <div class="summary-item">
+                    <span>Товары:</span>
+                    <span id="items-total">0 ₸</span>
+                </div>
+                <div class="summary-item">
+                    <span>Доставка:</span>
+                    <span>Бесплатно</span>
+                </div>
+                <div class="summary-total">
+                    <span>Итого:</span>
+                    <span id="total-price">0 ₸</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно успеха -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="modal-title">Заказ оформлен!</h2>
+            <p class="modal-text">Ваш заказ успешно создан. Ожидайте доставку.</p>
+            <div class="modal-actions">
+                <a href="home.html" class="btn btn-primary">
+                    <i class="fas fa-home"></i> На главную
+                </a>
+                <a href="cart.html" class="btn btn-secondary">
+                    <i class="fas fa-shopping-cart"></i> В корзину
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>TechMarket</h3>
+                <p>Лучший маркетплейс техники с 2023 года.</p>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Контакты</h3>
+                <ul class="footer-links">
+                    <li><i class="fas fa-phone"></i> +7 (777) 123-45-67</li>
+                    <li><i class="fas fa-envelope"></i> info@techmarket.kz</li>
+                    <li><i class="fas fa-map-marker-alt"></i> г. Алматы</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 TechMarket. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+    class OrderPage {
+        constructor() {
+            this.token = localStorage.getItem('token');
+            this.cartItems = [];
+            this.cartTotal = 0;
+            this.init();
+        }
+
+        async init() {
+            if (!this.token) {
+                this.showError('Требуется авторизация');
+                return;
+            }
+
+            await this.loadCart();
+            this.setupEventListeners();
+        }
+
+        async loadCart() {
+            try {
+                this.showLoading();
+
+                const response = await fetch('http://localhost:8000/api/cart/', {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Ошибка загрузки корзины');
+                }
+
+                const cartData = await response.json();
+                this.cartItems = cartData.items || [];
+                this.cartTotal = parseFloat(cartData.total) || 0;
+
+                if (this.cartItems.length === 0) {
+                    this.showEmptyCart();
+                } else {
+                    this.renderOrder();
+                }
+
+            } catch (error) {
+                console.error('Ошибка загрузки корзины:', error);
+                this.showError('Не удалось загрузить корзину');
+            }
+        }
+
+        renderOrder() {
+            const itemsContainer = document.getElementById('order-items');
+            
+            itemsContainer.innerHTML = this.cartItems.map(item => {
+                const itemTotal = item.quantity * parseFloat(item.product.price);
+                return `
+                    <div class="order-item">
+                        <span>${item.product.name} × ${item.quantity}</span>
+                        <span>${itemTotal.toLocaleString()} ₸</span>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('items-total').textContent = this.cartTotal.toLocaleString() + ' ₸';
+            document.getElementById('total-price').textContent = this.cartTotal.toLocaleString() + ' ₸';
+
+            this.hideLoading();
+            document.getElementById('order-content').style.display = 'grid';
+        }
+
+        setupEventListeners() {
+            const submitBtn = document.getElementById('submit-order');
+            submitBtn.addEventListener('click', () => this.submitOrder());
+        }
+
+async submitOrder() {
+    const address = document.getElementById('address').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const comment = document.getElementById('comment').value.trim();
+    
+    // Валидация
+    if (!address) {
+        this.showErrorField('address');
+        return;
+    }
+
+    if (!phone) {
+        this.showErrorField('phone');
+        return;
+    }
+
+    try {
+        const submitBtn = document.getElementById('submit-order');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Оформляем...';
+
+        // Отправляем один запрос с адресом, телефоном и комментарием
+        // Бэкенд сам возьмет товары из корзины
+        const response = await fetch('http://localhost:8000/api/orders/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                address: address,
+                phone: phone,
+                comment: comment
+            })
+        });
+
+        console.log('Order response status:', response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Order error response:', errorText);
+            throw new Error(`Ошибка создания заказа: ${response.status} - ${errorText}`);
+        }
+
+        
+
+        this.showSuccessModal();
+
+    } catch (error) {
+        console.error('Ошибка оформления заказа:', error);
+        this.showNotification('Ошибка оформления заказа', 'error');
+
+        const submitBtn = document.getElementById('submit-order');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check"></i> Подтвердить заказ';
+    }
+}
+
+        async createOrder(productId, address, phone, comment) {
+            const response = await fetch('http://localhost:8000/api/orders/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    address: address,
+                    phone: phone,
+		    comment: comment
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка создания заказа: ${response.status}`);
+            }
+
+            return await response.json();
+        }
+
+        async clearCart() {
+            // Очищаем корзину после успешного заказа
+            for (const item of this.cartItems) {
+                await fetch(`http://localhost:8000/api/cart/items/${item.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`
+                    }
+                });
+            }
+        }
+
+        showErrorField(fieldId) {
+            const input = document.getElementById(fieldId);
+            const error = document.getElementById(`${fieldId}-error`);
+            
+            input.classList.add('error');
+            error.style.display = 'block';
+            
+            setTimeout(() => {
+                input.classList.remove('error');
+                error.style.display = 'none';
+            }, 3000);
+        }
+
+        showSuccessModal() {
+            const modal = document.getElementById('success-modal');
+            modal.style.display = 'flex';
+        }
+
+        showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                background: ${type === 'success' ? 'var(--success)' : 'var(--danger)'};
+                box-shadow: var(--card-shadow);
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('empty-cart').style.display = 'none';
+            document.getElementById('order-content').style.display = 'none';
+        }
+
+        hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('empty-cart').style.display = 'none';
+            document.getElementById('order-content').style.display = 'none';
+            
+            if (message) {
+                document.getElementById('error').querySelector('h3').textContent = message;
+            }
+        }
+
+        showEmptyCart() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('empty-cart').style.display = 'block';
+            document.getElementById('order-content').style.display = 'none';
+        }
+    }
+
+    // Initialize order page
+    document.addEventListener('DOMContentLoaded', () => {
+        new OrderPage();
+    });
+    </script>
+</body>
+</html>

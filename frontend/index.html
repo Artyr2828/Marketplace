@@ -3,170 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация</title>
+    <title>Регистрация - TechMarket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4f46e5;
-            --secondary-color: #6366f1;
-            --success-color: #10b981;
-            --error-color: #ef4444;
-            --text-color: #1f2937;
-            --light-gray: #f3f4f6;
-            --white: #ffffff;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --border: #e2e8f0;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
         body {
-            background-color: var(--light-gray);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
 
         .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 500px;
-            background-color: var(--white);
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
             overflow: hidden;
-            transition: all 0.3s ease;
         }
 
-        .form-container {
-            padding: 40px;
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 30px;
-            text-align: center;
-            color: var(--primary-color);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-        }
-
-        .error-message {
-            color: var(--error-color);
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary-color);
+        .header {
+            background: var(--primary);
             color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 10px;
+            padding: 30px;
+            text-align: center;
         }
 
-        button:hover {
-            background-color: var(--secondary-color);
+        .logo {
+            font-size: 2rem;
+            margin-bottom: 10px;
         }
 
-        button:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
         }
 
-        .step-indicator {
+        .header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .steps {
             display: flex;
             justify-content: center;
             margin-bottom: 30px;
+            gap: 10px;
         }
 
         .step {
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            background-color: #e5e7eb;
-            color: #6b7280;
+            background: var(--border);
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-weight: bold;
-            margin: 0 10px;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
             position: relative;
         }
 
         .step.active {
-            background-color: var(--primary-color);
+            background: var(--primary);
             color: white;
         }
 
         .step.completed {
-            background-color: var(--success-color);
+            background: var(--success);
             color: white;
         }
 
-        .step::before {
+        .step:not(:last-child)::after {
             content: '';
             position: absolute;
+            top: 50%;
+            left: 100%;
             width: 20px;
             height: 2px;
-            background-color: #e5e7eb;
-            right: 100%;
+            background: var(--border);
+            transform: translateY(-50%);
         }
 
-        .step:first-child::before {
+        .step.active:not(:last-child)::after,
+        .step.completed:not(:last-child)::after {
+            background: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-input.error {
+            border-color: var(--danger);
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 5px;
             display: none;
         }
 
-        .step.active::before, .step.completed::before {
-            background-color: var(--primary-color);
+        .password-strength {
+            margin-top: 5px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 2px;
+        }
+
+        .weak .strength-bar { background: var(--danger); width: 33%; }
+        .medium .strength-bar { background: var(--warning); width: 66%; }
+        .strong .strength-bar { background: var(--success); width: 100%; }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #059669;
         }
 
         .code-inputs {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 25px 0;
         }
 
-        .code-inputs input {
-            width: 60px;
-            height: 70px;
-            font-size: 24px;
+        .code-input {
+            width: 100%;
+            height: 60px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1.25rem;
             text-align: center;
-            padding: 0;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .code-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            transform: scale(1.05);
         }
 
         .resend-code {
@@ -174,159 +238,293 @@
             margin-top: 20px;
         }
 
-        .resend-code a {
-            color: var(--primary-color);
+        .timer {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .resend-link {
+            color: var(--primary);
             text-decoration: none;
             font-weight: 500;
             cursor: pointer;
         }
 
-        .resend-code a:hover {
+        .resend-link:hover {
             text-decoration: underline;
         }
 
-        .resend-code .timer {
-            color: #6b7280;
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+        }
+
+        .links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
         }
 
         .hidden {
             display: none;
         }
 
-        .success-message {
+        .success-screen {
             text-align: center;
-            padding: 40px;
-        }
-
-        .success-message h2 {
-            color: var(--success-color);
-            margin-bottom: 20px;
-        }
-
-        .success-message p {
-            margin-bottom: 30px;
+            padding: 40px 30px;
         }
 
         .success-icon {
-            font-size: 60px;
-            color: var(--success-color);
-            margin-bottom: 20px;
+            font-size: 3rem;
+            color: var(--success);
+            margin-bottom: 15px;
+        }
+
+        .success-screen h2 {
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+
+        .success-screen p {
+            color: var(--gray);
+            margin-bottom: 25px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success);
+        }
+
+        .notification.error {
+            background: var(--danger);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="step-indicator">
-            <div class="step active" id="step1">1</div>
-            <div class="step" id="step2">2</div>
-        </div>
-
-        <div id="registration-form" class="form-container">
-            <h1>Создать аккаунт</h1>
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="name">Имя пользователя</label>
-                    <input type="text" id="name" name="name" placeholder="От 3 до 9 символов">
-                    <div class="error-message" id="name-error"></div>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Ваш email">
-                    <div class="error-message" id="email-error"></div>
-                </div>
-                <div class="form-group">
-                    <label for="password">Пароль</label>
-                    <input type="password" id="password" name="password" placeholder="От 8 до 20 символов">
-                    <div class="error-message" id="password-error"></div>
-                </div>
-                <div class="form-group">
-                    <label for="password_confirmation">Подтвердите пароль</label>
-                    <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Повторите пароль">
-                    <div class="error-message" id="password-confirm-error"></div>
-                </div>
-                <button type="submit" id="registerBtn">Зарегистрироваться</button>
-		  <a href="login.html">Войти</a>
-            </form>
-        </div>
-
-        <div id="verification-form" class="form-container hidden">
-            <h1>Подтверждение email</h1>
-            <p>Мы отправили код подтверждения на <span id="user-email" style="font-weight: 500;"></span></p>
-            
-            <form id="verificationForm">
-                <div class="code-inputs">
-                    <input type="text" maxlength="1" data-index="0" class="code-input">
-                    <input type="text" maxlength="1" data-index="1" class="code-input">
-                    <input type="text" maxlength="1" data-index="2" class="code-input">
-                    <input type="text" maxlength="1" data-index="3" class="code-input">
-                </div>
-                <input type="hidden" id="verification-code" name="code">
-                <input type="hidden" id="verification-email" name="email">
-                <div class="error-message" id="code-error"></div>
-                <button type="submit" id="verifyBtn">Подтвердить</button>
-            </form>
-
-            <div class="resend-code">
-                <div class="timer" id="timer">Отправить код повторно через 60 сек</div>
-                <a href="#" id="resend-link" class="hidden">Отправить код повторно</a>
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-laptop-code"></i>
             </div>
+            <h1>Создать аккаунт</h1>
+            <p>Присоединяйтесь к TechMarket</p>
         </div>
 
-        <div id="success-message" class="success-message hidden">
-            <div class="success-icon">✓</div>
-            <h2>Регистрация завершена!</h2>
-            <p>Ваш аккаунт успешно зарегистрирован.</p>
-           <a href="login.html">Войти</a>
+        <div class="content">
+            <!-- Шаги -->
+            <div class="steps">
+                <div class="step active" id="step1">1</div>
+                <div class="step" id="step2">2</div>
+            </div>
+
+            <!-- Форма регистрации -->
+            <div id="registration-form">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">Имя пользователя</label>
+                        <input type="text" id="name" name="name" placeholder="Ваше имя" class="form-input">
+                        <div class="error-message" id="name-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" class="form-input">
+                        <div class="error-message" id="email-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" id="password" name="password" placeholder="Минимум 8 символов" class="form-input">
+                        <div class="password-strength" id="password-strength">
+                            <div class="strength-bar"></div>
+                        </div>
+                        <div class="error-message" id="password-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Подтвердите пароль</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Повторите пароль" class="form-input">
+                        <div class="error-message" id="password-confirm-error"></div>
+                    </div>
+
+                    <button type="submit" id="registerBtn" class="btn">
+                        <i class="fas fa-user-plus"></i> Создать аккаунт
+                    </button>
+
+                    <div class="links">
+                        Уже есть аккаунт? <a href="login.html">Войти</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Форма подтверждения -->
+            <div id="verification-form" class="hidden">
+                <h3 style="text-align: center; margin-bottom: 10px; color: var(--dark);">
+                    Подтверждение Email
+                </h3>
+                <p style="text-align: center; color: var(--gray); margin-bottom: 20px;">
+                    Код отправлен на <strong id="user-email"></strong>
+                </p>
+
+                <form id="verificationForm">
+                    <div class="code-inputs">
+                        <input type="text" maxlength="1" data-index="0" class="code-input">
+                        <input type="text" maxlength="1" data-index="1" class="code-input">
+                        <input type="text" maxlength="1" data-index="2" class="code-input">
+                        <input type="text" maxlength="1" data-index="3" class="code-input">
+                    </div>
+                    <input type="hidden" id="verification-code">
+                    <div class="error-message" id="code-error"></div>
+
+                    <button type="submit" id="verifyBtn" class="btn btn-success">
+                        <i class="fas fa-check"></i> Подтвердить
+                    </button>
+
+                    <div class="resend-code">
+                        <div class="timer" id="timer">Повторная отправка через 60 сек</div>
+                        <a href="#" id="resend-link" class="resend-link hidden">Отправить код повторно</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Успешная регистрация -->
+            <div id="success-screen" class="success-screen hidden">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Успешная регистрация!</h2>
+                <p>Ваш аккаунт подтвержден и готов к использованию</p>
+                <a href="login.html" class="btn">
+                    <i class="fas fa-sign-in-alt"></i> Войти в аккаунт
+                </a>
+            </div>
         </div>
     </div>
 
+    <!-- Уведомления -->
+    <div id="notification" class="notification"></div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Элементы формы регистрации
+            // Элементы
             const registerForm = document.getElementById('registerForm');
+            const verificationForm = document.getElementById('verificationForm');
+            const registrationForm = document.getElementById('registration-form');
+            const verificationFormContainer = document.getElementById('verification-form');
+            const successScreen = document.getElementById('success-screen');
+            
             const nameInput = document.getElementById('name');
             const emailInput = document.getElementById('email');
             const passwordInput = document.getElementById('password');
             const passwordConfirmInput = document.getElementById('password_confirmation');
+            const passwordStrength = document.getElementById('password-strength');
             
-            // Элементы формы подтверждения
-            const verificationForm = document.getElementById('verificationForm');
             const codeInputs = document.querySelectorAll('.code-input');
             const verificationCodeInput = document.getElementById('verification-code');
-            const verificationEmailInput = document.getElementById('verification-email');
             const userEmailSpan = document.getElementById('user-email');
             
-            // Контейнеры
-            const registrationFormContainer = document.getElementById('registration-form');
-            const verificationFormContainer = document.getElementById('verification-form');
-            const successMessageContainer = document.getElementById('success-message');
-            
-            // Кнопки
             const registerBtn = document.getElementById('registerBtn');
             const verifyBtn = document.getElementById('verifyBtn');
             const resendLink = document.getElementById('resend-link');
             const timerElement = document.getElementById('timer');
             
-            // Индикаторы шагов
             const step1 = document.getElementById('step1');
             const step2 = document.getElementById('step2');
-            
-            // Таймер для повторной отправки кода
+
+            let currentEmail = '';
             let countdown = 60;
             let timer;
 
-            // Обработчик отправки формы регистрации
-            registerForm.addEventListener('submit', async function(e) {
+            // Регистрация
+            registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
-                // Валидация
+                await handleRegistration();
+            });
+
+            // Валидация пароля
+            passwordInput.addEventListener('input', function() {
+                validatePasswordStrength(this.value);
+                hideErrors();
+            });
+
+            passwordConfirmInput.addEventListener('input', function() {
+                validatePasswordMatch();
+                hideErrors();
+            });
+
+            // Очистка ошибок
+            [nameInput, emailInput].forEach(input => {
+                input.addEventListener('input', hideErrors);
+            });
+
+            // Обработка кода подтверждения
+            codeInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const value = this.value;
+                    const index = parseInt(this.dataset.index);
+
+                    if (value.length === 1 && index < 3) {
+                        codeInputs[index + 1].focus();
+                    }
+
+                    updateVerificationCode();
+                    hideError('code-error');
+                });
+
+                input.addEventListener('keydown', function(e) {
+                    const index = parseInt(this.dataset.index);
+
+                    if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
+            });
+
+            // Подтверждение кода
+            verificationForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await verifyCode();
+            });
+
+            // Повторная отправка кода
+            resendLink.addEventListener('click', async (e) => {
+                e.preventDefault();
+                await resendCode();
+            });
+
+            async function handleRegistration() {
+                hideErrors();
+                clearFieldStyles();
+
                 if (!validateRegistrationForm()) {
                     return;
                 }
-                
+
                 registerBtn.disabled = true;
-                registerBtn.textContent = 'Отправка...';
-                
+                registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
+
                 try {
                     const response = await fetch('http://localhost:8000/api/register', {
                         method: 'POST',
@@ -335,77 +533,175 @@
                             'Accept': 'application/json'
                         },
                         body: JSON.stringify({
-                            name: nameInput.value,
-                            email: emailInput.value,
+                            name: nameInput.value.trim(),
+                            email: emailInput.value.trim(),
                             password: passwordInput.value,
                             password_confirmation: passwordConfirmInput.value
                         })
                     });
-                    
+
                     const data = await response.json();
-                    
+
+                    if (data.status === 'error') {
+                        handleRegistrationErrors(data.error);
+                        return;
+                    }
+
                     if (!response.ok) {
                         throw new Error(data.message || 'Ошибка регистрации');
                     }
+
+                    // Успех
+                    currentEmail = emailInput.value.trim();
+                    showNotification('Код подтверждения отправлен на ваш email!', 'success');
+                    showVerificationForm();
                     
-                    // Переход к подтверждению email
-                    userEmailSpan.textContent = emailInput.value;
-                    verificationEmailInput.value = emailInput.value;
-                    
-                    registrationFormContainer.classList.add('hidden');
-                    verificationFormContainer.classList.remove('hidden');
-                    
-                    step1.classList.remove('active');
-                    step1.classList.add('completed');
-                    step2.classList.add('active');
-                    
-                    // Запуск таймера для повторной отправки кода
-                    startCountdown();
-                    
-                    // Автофокус на первый инпут кода
-                    codeInputs[0].focus();
                 } catch (error) {
-                    showError('email-error', error.message);
+                    showNotification('Ошибка соединения', 'error');
+                    console.error('Registration error:', error);
                 } finally {
                     registerBtn.disabled = false;
-                    registerBtn.textContent = 'Зарегистрироваться';
+                    registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Создать аккаунт';
                 }
-            });
-            
-            // Обработчик ввода кода подтверждения
-            codeInputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    const value = this.value;
-                    const index = parseInt(this.dataset.index);
+            }
+
+function handleRegistrationErrors(errorData) {
+    console.log('Error data:', errorData);
+
+    // Проверяем на ошибку "Email in Used" (errorData - это уже data.error)
+    if (errorData === 'Email in Used') {
+        showFieldError('email', 'Этот email уже используется');
+        return;
+    }
+
+    // Обрабатываем валидационные ошибки (для других случаев)
+    if (typeof errorData === 'object') {
+        for (const [field, messages] of Object.entries(errorData)) {
+            const errorMessage = Array.isArray(messages) ? messages[0] : messages;
+            showFieldError(field, errorMessage);
+        }
+    }
+}
+	function showFieldError(field, message) {
+                const fieldMap = {
+                    'name': 'name-error',
+                    'email': 'email-error',
+                    'password': 'password-error',
+                    'password_confirmation': 'password-confirm-error'
+                };
+
+                const errorElementId = fieldMap[field];
+                if (errorElementId) {
+                    const errorElement = document.getElementById(errorElementId);
+                    const inputElement = document.getElementById(field);
                     
-                    if (value.length === 1 && index < 3) {
-                        codeInputs[index + 1].focus();
+                    if (errorElement && inputElement) {
+                        errorElement.textContent = translateErrorMessage(message);
+                        errorElement.style.display = 'block';
+                        inputElement.classList.add('error');
                     }
-                    
-                    updateVerificationCode();
-                });
+                }
+            }
+
+            function translateErrorMessage(message) {
+                const translations = {
+                    'The name field is required.': 'Введите имя',
+                    'The name field must be at least 3 characters.': 'Имя должно быть от 3 символов',
+                    'The email field must be a valid email address.': 'Введите корректный email',
+                    'The email field is required.': 'Введите email',
+                    'The password field must be at least 8 characters.': 'Пароль должен быть от 8 символов',
+                    'The password field confirmation does not match.': 'Пароли не совпадают',
+                    'The password field is required.': 'Введите пароль',
+		    "Email in Used": "Email уже используется"
+                };
                 
-                input.addEventListener('keydown', function(e) {
-                    const index = parseInt(this.dataset.index);
-                    
-                    if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
-                        codeInputs[index - 1].focus();
-                    }
-                });
-            });
-            
-            // Обработчик отправки формы подтверждения
-            verificationForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
+                return translations[message] || message;
+            }
+
+            function validateRegistrationForm() {
+                let isValid = true;
+
+                if (!nameInput.value.trim()) {
+                    showFieldError('name', 'The name field is required.');
+                    isValid = false;
+                } else if (nameInput.value.trim().length < 3) {
+                    showFieldError('name', 'The name field must be at least 3 characters.');
+                    isValid = false;
+                }
+
+                if (!emailInput.value.trim()) {
+                    showFieldError('email', 'The email field is required.');
+                    isValid = false;
+                } else if (!isValidEmail(emailInput.value.trim())) {
+                    showFieldError('email', 'The email field must be a valid email address.');
+                    isValid = false;
+                }
+
+                if (!passwordInput.value) {
+                    showFieldError('password', 'The password field is required.');
+                    isValid = false;
+                } else if (passwordInput.value.length < 8) {
+                    showFieldError('password', 'The password field must be at least 8 characters.');
+                    isValid = false;
+                }
+
+                if (passwordInput.value !== passwordConfirmInput.value) {
+                    showFieldError('password_confirmation', 'The password field confirmation does not match.');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            function validatePasswordStrength(password) {
+                let strength = 0;
                 
-                if (!verificationCodeInput.value || verificationCodeInput.value.length !== 4) {
+                if (password.length >= 8) strength++;
+                if (password.match(/[a-z]+/)) strength++;
+                if (password.match(/[A-Z]+/)) strength++;
+                if (password.match(/[0-9]+/)) strength++;
+                if (password.match(/[!@#$%^&*(),.?":{}|<>]+/)) strength++;
+
+                passwordStrength.className = 'password-strength';
+                if (password.length > 0) {
+                    if (strength < 2) passwordStrength.classList.add('weak');
+                    else if (strength < 4) passwordStrength.classList.add('medium');
+                    else passwordStrength.classList.add('strong');
+                }
+            }
+
+            function validatePasswordMatch() {
+                if (passwordConfirmInput.value && passwordInput.value !== passwordConfirmInput.value) {
+                    passwordConfirmInput.classList.add('error');
+                } else {
+                    passwordConfirmInput.classList.remove('error');
+                }
+            }
+
+            function showVerificationForm() {
+                registrationForm.classList.add('hidden');
+                verificationFormContainer.classList.remove('hidden');
+                userEmailSpan.textContent = currentEmail;
+
+                step1.classList.remove('active');
+                step1.classList.add('completed');
+                step2.classList.add('active');
+
+                startCountdown();
+                codeInputs[0].focus();
+            }
+
+            async function verifyCode() {
+                const code = verificationCodeInput.value;
+                
+                if (!code || code.length !== 4) {
                     showError('code-error', 'Введите 4-значный код');
                     return;
                 }
-                
+
                 verifyBtn.disabled = true;
-                verifyBtn.textContent = 'Проверка...';
-                
+                verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Проверка...';
+
                 try {
                     const response = await fetch('http://localhost:8000/api/register/check-code', {
                         method: 'POST',
@@ -414,150 +710,74 @@
                             'Accept': 'application/json'
                         },
                         body: JSON.stringify({
-                            email: verificationEmailInput.value,
-                            code: verificationCodeInput.value
+                            email: currentEmail,
+                            code: code
                         })
                     });
-                    
+
                     const data = await response.json();
-                    
+
                     if (!response.ok) {
-                        throw new Error(data.message || 'Неверный код подтверждения');
+                        throw new Error(data.message || 'Неверный код');
                     }
-                    
-                    // Успешное подтверждение
+
+                    // Успех
                     verificationFormContainer.classList.add('hidden');
-                    successMessageContainer.classList.remove('hidden');
-                    
-                    step2.classList.remove('active');
+                    successScreen.classList.remove('hidden');
                     step2.classList.add('completed');
-                    
-                    // Остановка таймера
                     clearInterval(timer);
+                    
                 } catch (error) {
                     showError('code-error', error.message);
                 } finally {
                     verifyBtn.disabled = false;
-                    verifyBtn.textContent = 'Подтвердить';
+                    verifyBtn.innerHTML = '<i class="fas fa-check"></i> Подтвердить';
                 }
-            });
-            
-            // Обработчик повторной отправки кода
-            resendLink.addEventListener('click', async function(e) {
-                e.preventDefault();
-                
+            }
+
+            async function resendCode() {
                 try {
-                    const response = await fetch('http://localhost:8000/api/register/check-code/regenerateCode/', {
+                    const response = await fetch('http://localhost:8000/api/register/regenerateCode/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json'
                         },
                         body: JSON.stringify({
-                            name: nameInput.value,
-                            email: emailInput.value,
-                            password: passwordInput.value,
-                            password_confirmation: passwordConfirmInput.value
+                            email: currentEmail
                         })
                     });
-                    
+
                     const data = await response.json();
-                    
+
                     if (!response.ok) {
-                        throw new Error(data.message || 'Ошибка отправки кода');
+                        throw new Error(data.message || 'Ошибка отправки');
                     }
-                    
-                    // Сброс таймера
+
+                    showNotification('Код отправлен повторно!', 'success');
                     startCountdown();
                     
-                    // Очистка полей ввода кода
+                    // Очистка полей
                     codeInputs.forEach(input => input.value = '');
                     verificationCodeInput.value = '';
                     codeInputs[0].focus();
+                    hideError('code-error');
                     
-                    // Скрытие ошибки
-                    hideError('code-error');
                 } catch (error) {
-                    showError('code-error', error.message);
-                }
-            });
-            
-            // Функция валидации формы регистрации
-            function validateRegistrationForm() {
-                let isValid = true;
-                
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-                
-                return isValid;
-            }
-            
-            // Функция обновления скрытого поля с кодом
-            function updateVerificationCode() {
-                let code = '';
-                codeInputs.forEach(input => {
-                    code += input.value;
-                });
-                verificationCodeInput.value = code;
-                
-                if (code.length === 4) {
-                    hideError('code-error');
+                    showNotification('Ошибка отправки кода', 'error');
                 }
             }
-            
-            // Функция отображения ошибки
-            function showError(elementId, message) {
-                const errorElement = document.getElementById(elementId);
-                errorElement.textContent = message;
-                errorElement.style.display = 'block';
-            }
-            
-            // Функция скрытия ошибки
-            function hideError(elementId) {
-                const errorElement = document.getElementById(elementId);
-                errorElement.style.display = 'none';
-            }
-            
-            // Функция запуска таймера
+
             function startCountdown() {
                 countdown = 60;
                 resendLink.classList.add('hidden');
                 timerElement.classList.remove('hidden');
                 updateTimerDisplay();
-                
+
                 timer = setInterval(() => {
                     countdown--;
                     updateTimerDisplay();
-                    
+
                     if (countdown <= 0) {
                         clearInterval(timer);
                         timerElement.classList.add('hidden');
@@ -565,13 +785,62 @@
                     }
                 }, 1000);
             }
-            
-            // Функция обновления отображения таймера
+
             function updateTimerDisplay() {
-                timerElement.textContent = `Отправить код повторно через ${countdown} сек`;
+                timerElement.textContent = `Повторная отправка через ${countdown} сек`;
+            }
+
+            function updateVerificationCode() {
+                let code = '';
+                codeInputs.forEach(input => {
+                    code += input.value;
+                });
+                verificationCodeInput.value = code;
+            }
+
+            function showError(elementId, message) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.textContent = message;
+                    element.style.display = 'block';
+                }
+            }
+
+            function hideError(elementId) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.style.display = 'none';
+                }
+            }
+
+            function hideErrors() {
+                document.querySelectorAll('.error-message').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }
+
+            function clearFieldStyles() {
+                document.querySelectorAll('.form-input').forEach(input => {
+                    input.classList.remove('error');
+                });
+            }
+
+            function showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.classList.add('show');
+
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
             }
         });
     </script>
 </body>
 </html>
-

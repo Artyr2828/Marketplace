@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechMarket - История заказов</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --accent: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+	    max-width: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e6e6ff 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-link:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .history-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--secondary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+            font-size: 18px;
+            color: var(--secondary);
+        }
+
+        .loading i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .error {
+            text-align: center;
+            padding: 100px 20px;
+            color: var(--danger);
+        }
+
+        .error i {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .empty-orders {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--secondary);
+        }
+
+        .empty-orders i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #cbd5e1;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Orders List */
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.15);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .order-id {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .order-date {
+            color: var(--secondary);
+            font-size: 14px;
+        }
+
+        .order-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .customer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .customer-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .customer-details h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .customer-details p {
+            color: var(--secondary);
+            font-size: 14px;
+        }
+
+        .order-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .detail-value {
+            color: var(--dark);
+            text-align: right;
+        }
+
+        .order-items {
+            grid-column: 1 / -1;
+        }
+
+        .items-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-quantity {
+            background: var(--primary);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .item-name {
+            font-weight: 500;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .order-total {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fffbeb;
+            color: #f59e0b;
+        }
+
+        .status-paid {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .status-shipped {
+            background: #f0f9ff;
+            color: #0ea5e9;
+        }
+
+        .status-delivered {
+            background: #ecfdf5;
+            color: #10b981;
+        }
+
+        .status-cancelled {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .order-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .order-footer {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .history-container {
+                padding: 15px;
+            }
+
+            .order-card {
+                padding: 20px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .history-container {
+                margin: 20px auto;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .order-card {
+                padding: 15px;
+            }
+
+            .customer-info {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+	/* Добавить в медиа-запросы для мобилок */
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .nav-link {
+        padding: 8px 12px;
+        font-size: 14px;
+        flex: 1;
+        min-width: 120px;
+        justify-content: center;
+        text-align: center;
+    }
+
+    /* Предотвращаем горизонтальный скролл */
+    body {
+        overflow-x: hidden;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-links {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .nav-link {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+	.history-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .history-container {
+        padding: 15px 10px;
+        margin: 20px auto;
+    }
+    
+    /* Предотвращаем выход карточек за границы */
+    .order-card {
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+	@media (max-width: 768px) {
+    .order-content {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .order-footer {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    /* Убедимся, что текст не выходит за границы */
+    .detail-value, .item-name, .customer-details h4 {
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+}
+
+	
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="nav-container">
+            <a href="home.html" class="logo">
+                <i class="fas fa-laptop-code"></i>
+                <span>TechMarket</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Главная</span>
+                </a>
+                <a href="cart.html" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Корзина</span>
+                </a>
+                <a href="order-history.html" class="nav-link active">
+                    <i class="fas fa-history"></i>
+                    <span>Мои заказы</span>
+                </a>
+                <a href="#" class="nav-link" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Выйти</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="history-container">
+        <h1 class="page-title">📦 История заказов</h1>
+
+        <!-- Статистика -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-shopping-bag stat-icon"></i>
+                <div class="stat-number" id="total-orders">0</div>
+                <div class="stat-label">Всего заказов</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock stat-icon"></i>
+                <div class="stat-number" id="active-orders">0</div>
+                <div class="stat-label">Активные заказы</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-circle stat-icon"></i>
+                <div class="stat-number" id="completed-orders">0</div>
+                <div class="stat-label">Завершенные</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-wallet stat-icon"></i>
+                <div class="stat-number" id="total-spent">0 ₸</div>
+                <div class="stat-label">Всего потрачено</div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Загрузка истории заказов...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Ошибка загрузки заказов</h3>
+            <p>Попробуйте обновить страницу</p>
+        </div>
+
+        <div id="empty-orders" class="empty-orders" style="display: none;">
+            <i class="fas fa-box-open"></i>
+            <h3>Заказов пока нет</h3>
+            <p>Ваши заказы появятся здесь после оформления</p>
+            <a href="home.html" class="btn">
+                <i class="fas fa-shopping-bag"></i> Перейти к покупкам
+            </a>
+        </div>
+
+        <div id="orders-list" class="orders-list">
+            <!-- Заказы будут здесь -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>TechMarket</h3>
+                <p>Лучший маркетплейс техники с 2023 года.</p>
+            </div>
+
+            <div class="footer-column">
+                <h3>Контакты</h3>
+                <ul class="footer-links">
+                    <li><i class="fas fa-phone"></i> +7 (777) 123-45-67</li>
+                    <li><i class="fas fa-envelope"></i> info@techmarket.kz</li>
+                    <li><i class="fas fa-map-marker-alt"></i> г. Алматы</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2023 TechMarket. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+    class OrderHistoryPage {
+        constructor() {
+            this.token = localStorage.getItem('token');
+            this.orders = [];
+            this.init();
+        }
+
+        async init() {
+            if (!this.token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            await this.loadOrders();
+        }
+
+        async loadOrders() {
+            try {
+                this.showLoading();
+
+                const response = await fetch('http://localhost:8000/api/orders/order_items/', {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        this.showError('Требуется авторизация');
+                        setTimeout(() => window.location.href = 'login.html', 2000);
+                        return;
+                    }
+                    throw new Error('Ошибка загрузки заказов');
+                }
+
+                const data = await response.json();
+                // Преобразуем данные из массива массивов в плоский массив
+                this.orders = data.flat();
+                this.renderOrders();
+                this.updateStats();
+
+            } catch (error) {
+                console.error('Ошибка загрузки заказов:', error);
+                this.showError('Не удалось загрузить историю заказов');
+            }
+        }
+
+        renderOrders() {
+            const ordersContainer = document.getElementById('orders-list');
+
+            if (!this.orders || this.orders.length === 0) {
+                this.showEmptyOrders();
+                return;
+            }
+
+            // Сортируем заказы по дате (новые сверху)
+            this.orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            ordersContainer.innerHTML = this.orders.map(order => `
+                <div class="order-card" data-order-id="${order.id}">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-id">Заказ #${order.id}</div>
+                            <div class="order-date">${new Date(order.created_at).toLocaleDateString('ru-RU', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}</div>
+                        </div>
+                        <span class="status-badge status-${order.status}">
+                            ${this.getStatusText(order.status)}
+                        </span>
+                    </div>
+
+                    <div class="order-content">
+                        <div class="customer-info">
+                            <div class="customer-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="customer-details">
+                                <h4>${order.user?.name || 'Пользователь'}</h4>
+                                <p>${order.user?.email || ''}</p>
+                            </div>
+                        </div>
+
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Телефон:</span>
+                                <span class="detail-value">${order.phone}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Адрес:</span>
+                                <span class="detail-value">${order.address}</span>
+                            </div>
+                            ${order.comment ? `
+                            <div class="detail-item">
+                                <span class="detail-label">Комментарий:</span>
+                                <span class="detail-value">${order.comment}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="order-items">
+                            <h3 class="items-title">Товары:</h3>
+                            ${order.order_items.map(item => `
+                                <div class="order-item">
+                                    <div class="item-info">
+                                        <span class="item-quantity">${item.quantity}</span>
+                                        <span class="item-name">Товар #${item.product_id}</span>
+                                    </div>
+                                    <span class="item-price">${(parseFloat(item.price) * item.quantity).toLocaleString()} ₸</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="order-footer">
+                        <div class="order-total">
+                            Итого: ${order.order_items.reduce((total, item) => 
+                                total + (parseFloat(item.price) * item.quantity), 0).toLocaleString()} ₸
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            this.hideLoading();
+        }
+
+        updateStats() {
+            if (!this.orders.length) return;
+
+            document.getElementById('total-orders').textContent = this.orders.length;
+            
+            const activeOrders = this.orders.filter(order => 
+                ['pending', 'paid', 'shipped'].includes(order.status)
+            ).length;
+            const completedOrders = this.orders.filter(order => 
+                order.status === 'delivered'
+            ).length;
+            
+            document.getElementById('active-orders').textContent = activeOrders;
+            document.getElementById('completed-orders').textContent = completedOrders;
+            
+            const totalSpent = this.orders.reduce((total, order) => {
+                return total + order.order_items.reduce((orderTotal, item) => 
+                    orderTotal + (parseFloat(item.price) * item.quantity), 0);
+            }, 0);
+            
+            document.getElementById('total-spent').textContent = totalSpent.toLocaleString() + ' ₸';
+        }
+
+        getStatusText(status) {
+            const statusMap = {
+                'pending': 'Ожидает оплаты',
+                'paid': 'Оплачен',
+                'shipped': 'Отправлен',
+                'delivered': 'Доставлен',
+                'cancelled': 'Отменен'
+            };
+            return statusMap[status] || status;
+        }
+
+        showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('empty-orders').style.display = 'none';
+            document.getElementById('orders-list').style.display = 'none';
+            document.querySelector('.stats-grid').style.display = 'none';
+        }
+
+        hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('orders-list').style.display = 'block';
+            document.querySelector('.stats-grid').style.display = 'grid';
+        }
+
+        showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('empty-orders').style.display = 'none';
+            document.getElementById('orders-list').style.display = 'none';
+            document.querySelector('.stats-grid').style.display = 'none';
+
+            if (message) {
+                document.getElementById('error').querySelector('h3').textContent = message;
+            }
+        }
+
+        showEmptyOrders() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('empty-orders').style.display = 'block';
+            document.getElementById('orders-list').style.display = 'none';
+            document.querySelector('.stats-grid').style.display = 'none';
+        }
+    }
+
+    function logout() {
+        if (confirm('Вы уверены, что хотите выйти?')) {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+    }
+
+    // Initialize order history page
+    document.addEventListener('DOMContentLoaded', () => {
+        new OrderHistoryPage();
+    });
+    </script>
+</body>
+</html>

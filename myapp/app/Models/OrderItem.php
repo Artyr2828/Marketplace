@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\OrdersTable;
 use App\Models\Product;
-
+use App\Models\User;
 class OrderItem extends Model
 {
     use HasFactory;
@@ -14,11 +14,12 @@ class OrderItem extends Model
    protected $table = 'order_items';
 
    protected $fillable = [
-        'id',
         'order_id',
         'product_id',
         'price',
-        'quantity'
+        'quantity',
+        'seller_id',
+         'user_id'
    ];
    //Подключаем Заказы
    public function orders(){
@@ -28,4 +29,10 @@ class OrderItem extends Model
    public function product(){
      return $this->belongsTo(Product::class, 'product_id', 'id');
    }
+
+   public function seller(){
+     return $this->belongsTo(User::class, 'seller_id');
+   }
+
+   public function user(){                                       return $this->belongsTo(User::class, 'user_id');        }
 }

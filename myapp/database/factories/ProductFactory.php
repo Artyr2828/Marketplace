@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-
+use App\Models\User;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
  */
@@ -18,6 +18,7 @@ class ProductFactory extends Factory
     {
         return [
             'id'=>3,
+             'user_id'=>1,
             'name'=>$this->faker->word(),
             'price'=>$this->faker->numberBetween(100, 10000)
         ];

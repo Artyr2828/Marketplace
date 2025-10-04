@@ -126,69 +126,170 @@
           <p>Нет аккаунта? <a href="/register">Регистрация</a></p>
       </div>
   </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
 
-  <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          const loginForm = document.getElementById('loginForm');
-          const emailInput = document.getElementById('email');
-          const passwordInput = document.getElementById('password');
-          const loginBtn = document.getElementById('loginBtn');
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            await handleLogin();
+        });
 
-          loginForm.addEventListener('submit', async function(e) {
-              e.preventDefault();
+        async function handleLogin() {
+            // Скрываем предыдущие ошибки
+            hideErrors();
 
-              // простая валидация
-              if (!emailInput.value) {
-                  showError('email-error', 'Введите email');
-                  return;
-              }
-              if (!passwordInput.value) {
-                  showError('password-error', 'Введите пароль');
-                  return;
-              }
+            // Валидация
+            if (!validateForm()) {
+                return;
+            }
 
-              loginBtn.disabled = true;
-              loginBtn.textContent = 'Вход...';
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Вход...';
 
-              try {
-                  const response = await fetch('http://localhost:8000/api/login', {
-                      method: 'POST',
-                      headers: {
-                          'Content-Type': 'application/json',
-                          'Accept': 'application/json'
-                      },
-                      body: JSON.stringify({
-                          email: emailInput.value,
-                          password: passwordInput.value
-                      })
-                  });
+            try {
+                const response = await fetch('http://localhost:8000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: emailInput.value.trim(),
+                        password: passwordInput.value
+                    })
+                });
 
-                  const data = await response.json();
+                const data = await response.json();
 
-                  if (!response.ok) {
-                      throw new Error(data.message || 'Ошибка входа');
-                  }
+                if (data.status === 'error') {
+                    // Обрабатываем ошибки от сервера
+                    handleServerError(data);
+                    return;
+                }
 
-                  // сохраняем токен в localStorage
-                  localStorage.setItem('token', data.token);
+                if (!response.ok) {
+                    throw new Error(data.message || `Ошибка ${response.status}`);
+                }
 
-                  // редирект на главную страницу
-                  window.location.href = 'home.html';
-              } catch (error) {
-                  showError('password-error', error.message);
-              } finally {
-                  loginBtn.disabled = false;
-                  loginBtn.textContent = 'Войти';
-              }
-          });
+                // Успешный вход
+                localStorage.setItem('token', data.token);
+                showSuccess('Вход выполнен успешно!');
+                
+                // Редирект с небольшой задержкой
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 1000);
 
-          function showError(elementId, message) {
-              const errorElement = document.getElementById(elementId);
-              errorElement.textContent = message;
-              errorElement.style.display = 'block';
-          }
-      });
-  </script>
+            } catch (error) {
+                showError('password-error', 'Ошибка соединения с сервером');
+                console.error('Ошибка входа:', error);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Войти';
+            }
+        }
+
+        function validateForm() {
+            let isValid = true;
+
+            if (!emailInput.value.trim()) {
+                showError('email-error', 'Введите email');
+                isValid = false;
+            } else if (!isValidEmail(emailInput.value.trim())) {
+                showError('email-error', 'Введите корректный email');
+                isValid = false;
+            }
+
+            if (!passwordInput.value) {
+                showError('password-error', 'Введите пароль');
+                isValid = false;
+            } else if (passwordInput.value.length < 8) {
+                showError('password-error', 'Пароль должен содержать минимум 8 символов');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function handleServerError(data) {
+            const errorMessage = data.message || data.error || 'Произошла ошибка';
+            
+            // Специфичные обработки ошибок
+            if (data.error === 'User not found' || errorMessage.includes('пользователя не существует')) {
+                showError('email-error', 'Пользователь с таким email не найден');
+            } else if (data.error === 'Invalid password or email' || errorMessage.includes('пароль не действительный')) {
+                showError('password-error', 'Неверный пароль');
+                passwordInput.value = ''; // Очищаем поле пароля
+                passwordInput.focus(); // Фокусируемся на поле пароля
+            } else {
+                // Общая ошибка
+                showError('password-error', errorMessage);
+            }
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                
+                // Добавляем красную обводку к полю ввода
+                const inputField = errorElement.previousElementSibling;
+                if (inputField && inputField.tagName === 'INPUT') {
+                    inputField.style.borderColor = 'var(--error-color)';
+                }
+            }
+        }
+
+        function showSuccess(message) {
+            // Можно добавить временное сообщение об успехе
+            const successElement = document.createElement('div');
+            successElement.style.cssText = `
+                background-color: var(--success-color);
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                margin-bottom: 15px;
+                text-align: center;
+            `;
+            successElement.textContent = message;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(successElement, container.firstChild);
+            
+            setTimeout(() => {
+                successElement.remove();
+            }, 3000);
+        }
+
+        function hideErrors() {
+            const errorElements = document.querySelectorAll('.error-message');
+            errorElements.forEach(element => {
+                element.style.display = 'none';
+                element.textContent = '';
+                
+                // Убираем красную обводку
+                const inputField = element.previousElementSibling;
+                if (inputField && inputField.tagName === 'INPUT') {
+                    inputField.style.borderColor = '#d1d5db';
+                }
+            });
+        }
+
+        // Очистка ошибок при вводе
+        emailInput.addEventListener('input', hideErrors);
+        passwordInput.addEventListener('input', hideErrors);
+    });
+   </script>
 </body>
 </html>
 

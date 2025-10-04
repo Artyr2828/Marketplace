@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Services\Order\OrderService;
 use App\Http\Requests\StoreOrderRequest;
-use Predis\Command\Redis\Json\JSONDEL;
+use Psy\Util\Json;
 
 class OrderController extends Controller
 {
@@ -14,23 +13,27 @@ class OrderController extends Controller
        $this->orderService = $orderService;
     }
 
- /**
- * Записываем данные заказа в БД(POST)
- * @param StoreOrderRequest $r специальный Request для валидации данных заказа
- * @return JSON
- **/
-
+    /**
+ * Отправить заказ
+ * @param StoreOrderRequest $r данные заказа(телефон, коммент, адрес)
+ * @return Json
+ */
     public function store(StoreOrderRequest $r){
-       $this->orderService->store($r->product_id, $r->address, $r->phone, $r->comment);
-       return response()->api(['status'=>'ok']);
+       $this->orderService->store($r->address, $r->phone, $r->comment);
+       return response()->api(['status'=>'ok'], 200);
     }
 
     /**
- * @return Collection Данные заказа пользователя
- **/
+ * Отдать список заказов пользователя
+ * @return Json
+ */
 
     public function getOrderItems(){
        $user = auth()->user();
-       return response()->api([$user->order->load('orderItems')]);
-    }
+error_log("Helo");
+
+return response()->api([$user->order->load('orderItems')]);
+
+
+}
 }

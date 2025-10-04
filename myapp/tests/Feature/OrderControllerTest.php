@@ -29,10 +29,9 @@ class OrderControllerTest extends TestCase
         CartItems::factory()->create();
 
         $response = $this->post('/api/orders', [
-            'product_id'=>3,
             'address'=>'Пушкина',
             'phone'=>'+7828828892',
-            'quantity'=>3
+            'comment'=>"Хочу в красном"
         ]);
         $response->dump();
 

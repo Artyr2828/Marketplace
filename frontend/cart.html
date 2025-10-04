@@ -592,24 +592,26 @@ footer {
             <div class="cart-items" id="cart-items">
                 <!-- Cart items will be loaded here -->
             </div>
-            
-            <div class="order-summary">
-                <h3 class="summary-title">Итого</h3>
-                <div class="summary-item">
-                    <span>Итого</span>
-                    <span id="items-total">0 ₸</span>
-                </div>
-                <div class="summary-item">
-                    <span>Доставка:</span>
-                    <span>Бесплатно</span>
-                </div>
-                <div class="summary-total">
-                    <span>Общая сумма:</span>
-                    <span id="total-price">0 ₸</span>
-                </div>
-                <button class="checkout-btn" id="checkout-btn">
-                    <i class="fas fa-credit-card"></i> Перейти к оплате
-                </button>
+           <div class="order-summary">
+    <h3 class="summary-title">Итого</h3>
+    <div class="summary-item">
+        <span>Итого</span>
+        <span id="items-total">0 ₸</span>
+    </div>
+    <div class="summary-item">
+        <span>Доставка:</span>
+        <span>Бесплатно</span>
+    </div>
+    <div class="summary-total">
+        <span>Общая сумма:</span>
+        <span id="total-price">0 ₸</span>
+    </div>
+    
+    <!-- ЗАМЕНИТЕ ЭТУ КНОПКУ -->
+    <a href="orders.html" class="checkout-btn" style="display: block; text-align: center; text-decoration: none;">
+        <i class="fas fa-credit-card"></i> Оформить заказ
+    </a>
+</div>  
             </div>
         </div>
     </div>
@@ -644,6 +646,7 @@ class CartPage {
         this.cartTotal = 0;
         this.syncTimers = {};
         this.deletedItems = new Set();
+	this.isUpdating = false;
         this.init();
     }
 
@@ -663,36 +666,45 @@ class CartPage {
             delete this.syncTimers[itemId];
         }, 1000);
     }
+    
+	  async sendUpdateToServer(itemId, newQuantity) {
+    try {
+        console.log('Sending quantity update:', { itemId, quantity: newQuantity });
 
-    async sendUpdateToServer(itemId, newQuantity) {
-        try {
-            const response = await fetch(`http://localhost:8000/api/cart/items/${itemId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer ${this.token}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ quantity: newQuantity })
-            });
+        const response = await fetch(`http://localhost:8000/api/cart/items/${itemId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ quantity: newQuantity }) // Отправляем quantity вместо action
+        });
 
-            if (!response.ok) {
-                if (response.status === 404) {
-                    this.deletedItems.add(itemId);
-                    await this.loadCart();
-                } else {
-                    throw new Error('Ошибка обновления на сервере');
-                }
-            }
-        } catch (err) {
-            console.error('Ошибка синхронизации:', err);
-            if (err.message.includes('404')) {
+        console.log('Update response status:', response.status);
+
+        if (!response.ok) {
+            if (response.status === 404) {
                 this.deletedItems.add(itemId);
                 await this.loadCart();
+            } else {
+                const errorText = await response.text();
+                console.error('Server error:', errorText);
+                throw new Error('Ошибка обновления на сервере: ' + errorText);
             }
+        } else {
+            console.log('Quantity updated successfully');
+        }
+    } catch (err) {
+        console.error('Ошибка синхронизации:', err);
+        if (err.message.includes('404')) {
+            this.deletedItems.add(itemId);
+            await this.loadCart();
         }
     }
+}
 
+    
     async init() {
         if (!this.token) {
             this.showError('Требуется авторизация');
@@ -757,7 +769,13 @@ class CartPage {
         }
     }
 
-    async updateQuantity(itemId, newQuantity) {
+
+async updateQuantity(itemId, newQuantity) {
+    // Защита от множественных кликов
+    if (this.isUpdating) return;
+    this.isUpdating = true;
+
+    try {
         if (this.deletedItems.has(itemId)) {
             return;
         }
@@ -769,17 +787,61 @@ class CartPage {
 
         const item = this.cartItems.find(i => i.id === itemId);
         if (item) {
+            const oldQuantity = item.quantity;
+
+            // Если новое количество такое же как старое, ничего не делаем
+            if (newQuantity === oldQuantity) {
+                return;
+            }
+
             item.quantity = newQuantity;
+
+            // Немедленно обновляем отображение
+            this.updateItemDisplay(itemId, newQuantity);
+
+            // Пересчитываем общую сумму
+            this.cartTotal = this.cartItems.reduce(
+                (sum, i) => sum + i.quantity * parseFloat(i.product.price),
+                0
+            );
+
+            this.updateTotalDisplay();
+
+            // Отправляем обновление на сервер
+            this.scheduleSync(itemId, newQuantity);
         }
-
-        this.cartTotal = this.cartItems.reduce(
-            (sum, i) => sum + i.quantity * parseFloat(i.product.price),
-            0
-        );
-
-        this.renderCart();
-        this.scheduleSync(itemId, newQuantity);
+    } finally {
+        this.isUpdating = false;
     }
+}
+
+
+
+updateItemDisplay(itemId, quantity) {
+    // Немедленно обновляем отображение количества для конкретного товара
+    const quantityElement = document.querySelector(`.cart-item[data-id="${itemId}"] .quantity`);
+    if (quantityElement) {
+        quantityElement.textContent = quantity;
+    }
+    
+    // Немедленно обновляем сумму для товара
+    const item = this.cartItems.find(i => i.id === itemId);
+    if (item) {
+        const itemTotal = quantity * parseFloat(item.product.price);
+        const totalElement = document.querySelector(`.cart-item[data-id="${itemId}"] .item-total`);
+        if (totalElement) {
+            totalElement.textContent = `Сумма: ${itemTotal} ₸`;
+        }
+    }
+}
+
+updateTotalDisplay() {
+    document.getElementById('items-total').textContent = this.cartTotal.toFixed(2) + ' ₸';
+    document.getElementById('total-price').textContent = this.cartTotal.toFixed(2) + ' ₸';
+    
+    const itemsCount = this.cartItems.reduce((total, item) => total + item.quantity, 0);
+    document.getElementById('cart-count').textContent = itemsCount;
+}
 
     async removeItem(itemId) {
         this.deletedItems.add(itemId);
@@ -841,62 +903,98 @@ class CartPage {
             notification.remove();
         }, 3000);
     }
-
     renderCart() {
-        const itemsContainer = document.getElementById('cart-items');
-        let itemsCount = 0;
+    const itemsContainer = document.getElementById('cart-items');
+    let itemsCount = 0;
 
-        itemsContainer.innerHTML = this.cartItems.map(item => {
-            if (this.deletedItems.has(item.id)) {
-                return '';
-            }
+    itemsContainer.innerHTML = this.cartItems.map(item => {
+        if (this.deletedItems.has(item.id)) {
+            return '';
+        }
 
-            itemsCount += item.quantity;
-            const itemTotal = item.quantity * parseFloat(item.product.price);
-            const productName = item.product.name;
+        itemsCount += item.quantity;
+        const itemTotal = item.quantity * parseFloat(item.product.price);
+        const productName = item.product.name;
 
-            const firstImage = item.product.img__connect && item.product.img__connect.length > 0
-                ? item.product.img__connect[0].path
-                : this.generateImagePath(productName);
+        const firstImage = item.product.img__connect && item.product.img__connect.length > 0
+            ? item.product.img__connect[0].path
+            : this.generateImagePath(productName);
 
-            return `
-                <div class="cart-item" data-id="${item.id}">
-                    <div class="item-image">
-                        <img src="http://localhost:8000/${firstImage}"
-                             alt="${productName}"
-                             onerror="this.src='https://via.placeholder.com/100x100?text=Нет+фото'">
-                    </div>
-                    <div class="item-info">
-                        <h3 class="item-name">${productName}</h3>
-                        <div class="item-price">${item.product.price} ₸</div>
-                        <div class="item-total">Сумма: ${itemTotal} ₸</div>
-                    </div>
-                    <div class="item-actions">
-                        <div class="quantity-controls">
-                            <button class="quantity-btn" onclick="cartPage.updateQuantity(${item.id}, ${item.quantity - 1})">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <span class="quantity">${item.quantity}</span>
-                            <button class="quantity-btn" onclick="cartPage.updateQuantity(${item.id}, ${item.quantity + 1})">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-                        <button class="remove-btn" onclick="cartPage.removeItem(${item.id})">
-                            <i class="fas fa-trash"></i> Удалить
+        return `
+            <div class="cart-item" data-id="${item.id}">
+                <div class="item-image">
+                    <img src="${firstImage.startsWith('http') ? firstImage : 'http://localhost:8000/' + firstImage}"
+                         alt="${productName}"
+                         onerror="this.src='https://via.placeholder.com/100x100?text=Нет+фото'">
+                </div>
+                <div class="item-info">
+                    <h3 class="item-name">${productName}</h3>
+                    <div class="item-price">${item.product.price} ₸</div>
+                    <div class="item-total">Сумма: ${itemTotal} ₸</div>
+                </div>
+                <div class="item-actions">
+                    <div class="quantity-controls">
+                        <button class="quantity-btn minus-btn" data-id="${item.id}">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="quantity">${item.quantity}</span>
+                        <button class="quantity-btn plus-btn" data-id="${item.id}">
+                            <i class="fas fa-plus"></i>
                         </button>
                     </div>
+                    <button class="remove-btn" data-id="${item.id}">
+                        <i class="fas fa-trash"></i> Удалить
+                    </button>
                 </div>
-            `;
-        }).join('');
+            </div>
+        `;
+    }).join('');
 
-        document.getElementById('items-total').textContent = this.cartTotal.toFixed(2) + ' ₸';
-        document.getElementById('total-price').textContent = this.cartTotal.toFixed(2) + ' ₸';
-        document.getElementById('cart-count').textContent = itemsCount;
+    // Добавляем обработчики событий после рендеринга
+    this.addEventListeners();
+    
+    this.updateTotalDisplay();
+    this.hideLoading();
+    document.getElementById('cart-content').style.display = 'grid';
+}
 
-        this.hideLoading();
-        document.getElementById('cart-content').style.display = 'grid';
-    }
+addEventListeners() {
+    // Удаляем старые обработчики
+    this.removeEventListeners();
+    
+    // Добавляем новые обработчики
+    document.querySelectorAll('.minus-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const itemId = parseInt(e.target.closest('.quantity-btn').dataset.id);
+            const item = this.cartItems.find(i => i.id === itemId);
+            if (item) {
+                this.updateQuantity(itemId, item.quantity - 1);
+            }
+        });
+    });
 
+    document.querySelectorAll('.plus-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const itemId = parseInt(e.target.closest('.quantity-btn').dataset.id);
+            const item = this.cartItems.find(i => i.id === itemId);
+            if (item) {
+                this.updateQuantity(itemId, item.quantity + 1);
+            }
+        });
+    });
+
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const itemId = parseInt(e.target.closest('.remove-btn').dataset.id);
+            this.removeItem(itemId);
+        });
+    });
+}
+
+removeEventListeners() {
+    // Можно добавить логику для удаления старых обработчиков если нужно
+}
+  
     generateImagePath(productName) {
         const imageName = productName.toLowerCase()
             .replace(/\s+/g, '-')

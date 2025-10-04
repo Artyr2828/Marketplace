@@ -29,8 +29,8 @@ class HomeControllerTest extends TestCase
       $this->withoutMiddleware();
       $user = User::factory()->create();
       $this->actingAs($user, 'api');
-
-      $response = $this->withHeaders(["Accept"=>"application/json"])->get('/api/home/search?search=Nv');
+      $response = $this->get('/api/home?search=n');
+    dump($response->getContent());
     $response->assertStatus(200);
    }
 

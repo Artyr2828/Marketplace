@@ -1,0 +1,113 @@
+<?php
+namespace App\Services\Admin;
+
+use App\Models\User;
+use App\Models\Product;
+use Illuminate\Support\Facades\DB;
+use App\Interfaces\ImageStorageInterface;
+use Illuminate\Http\Request;
+use App\Models\OrdersTable;
+use Sebdesign\SM\Facade as StateMashine;
+
+class AdminPanelService{
+   private $imageStorage;
+
+   public function __construct(ImageStorageInterface $imageStorage){
+       $this->imageStorage = $imageStorage;
+   }
+  /**
+ * @param User $user получаем пользователя(админа) чтобы выдать ему продукты
+ * @return Collection $product отдаем коллекцию продуктов
+ **/
+   public function get(User $user){
+      $products = Product::where('user_id', $user->id)->with(['img_Connect', 'desc_Connect'])->get();
+      return $products;
+   }
+
+
+   /**
+ * @param array $dataProducts данные о продукте
+ * @param User $user пользователь
+    */
+
+   public function store(array $dataProducts, User $user){
+      $files = $dataProducts['image'];
+
+      $product = $user->products()->create([
+         'name'=>$dataProducts['name'],
+         'price'=>$dataProducts['price']
+      ]);
+      //$product = Product::where('user_id', $user->id)->first();
+      $product->desc_Connect()->create([
+          'desc'=>$dataProducts['desc']
+       ]);
+
+      //добавляем в БД изображения
+      $this->imageStorage->add($product, $files);
+   }
+
+   /**
+ * @param array $modifiedData Массив текстовых данных продукта для апдейта
+ * @param Product $product Продукт, данные которого должны изменить
+ * @param Request $imageActions информация об действие с изображениями
+   **/
+   public function update(array $modifiedData, Product $product, Request $imageActions){
+
+       DB::transaction(function() use ($modifiedData, $product, $imageActions){
+           //Изменяем Текстовые Данные
+           $product->update($modifiedData);
+           if (isset($modifiedData['description'])){
+           $product->desc_Connect()->updateOrCreate(['product_id'=>$product->id], ['desc' => $modifiedData['description']]);
+          }
+$images = $imageActions->file('images');
+if ($images instanceof \Illuminate\Http\UploadedFile) {
+    $images = [$images];
+}
+           //Добавляем картинку к уже существующим
+           if ($imageActions->hasFile('images')){
+               $this->imageStorage->add($product,$imageActions->file('images'));
+           }
+           if ($imageActions->hasFile('replace')){
+               $this->imageStorage->update($product, $imageActions->file('replace'));
+           }
+           if ($imageActions->has('delete')){
+               $this->imageStorage->delete($product, $imageActions->input('delete'));
+           }
+
+           $product->save();
+     });
+}
+
+   /**
+ *  @param OrdersTable $order Заказ, статус которого должны изменить
+ *  @param string $transition информация для изменения статуса
+   **/
+
+   public function updateStatus(OrdersTable $order, string $transition){
+      $stateMashine = StateMashine::get($order, 'graphA');
+
+      if ($stateMashine->can($transition)){
+           $stateMashine->apply($transition);
+           $order->save();
+      }
+      else{
+        throw new \Symfony\Component\HttpKernel\Exception\HttpException(422, "Ошибка изменения статуса");
+      }
+   }
+
+   /**
+ * Удаления продукта
+ * @param Product $product Продукт который должны удалить
+ **/
+
+   public function delete(Product $product){
+     if ($product->orderItems()->exists()){
+            throw new \Exception("У вас есть заказы по этому продукту!");
+     }
+
+     $deleted = $product->delete();
+     if ($deleted === 0){
+            throw new \Exception("Вы не может удалить данный продукт");
+     }
+   }
+}

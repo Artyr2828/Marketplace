@@ -18,8 +18,8 @@ class CartControllerTest extends TestCase
     public function test_add_to_cart(): void
     {
         $this->withExceptionHandling();
-        Product::factory()->create();
         $user = User::factory()->create();
+        Product::factory()->create();
         $this->actingAs($user);
         $response = $this->post('/api/cart/items', ['product_id'=>3]);
         $response->dump();
@@ -28,10 +28,10 @@ class CartControllerTest extends TestCase
 
    public function test_change_quantity(){
      $this->withExceptionHandling();
+    $user = User::factory()->create();
      Product::factory()->create();
      Carts::factory()->create();
      CartItems::factory()->create();
-    $user = User::factory()->create();
     $this->actingAs($user);
     $response = $this->patch('/api/cart/items/1', ['quantity'=>3]);
 

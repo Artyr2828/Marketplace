@@ -1,0 +1,1661 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "my Api",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/admin": {
+            "get": {
+                "tags": [
+                    "AdminPanel"
+                ],
+                "summary": "Get admin’s products",
+                "operationId": "ab0b76ec2eba013588e72ade92caf642",
+                "responses": {
+                    "200": {
+                        "description": "Admin products successfully returned"
+                    },
+                    "500": {
+                        "description": "Access to the content is forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/product/{ItemId}": {
+            "post": {
+                "tags": [
+                    "AdminPanel"
+                ],
+                "summary": "Update admin product",
+                "operationId": "3f7879126c484cb33ee4b7841276f9b1",
+                "parameters": [
+                    {
+                        "name": "ItemId",
+                        "in": "path",
+                        "description": "Product ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 66
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "_method": {
+                                        "description": "Laravel method override",
+                                        "type": "string",
+                                        "example": "PATCH"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "new Mobile"
+                                    },
+                                    "price": {
+                                        "type": "integer",
+                                        "example": 78000
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "New Description"
+                                    },
+                                    "images": {
+                                        "description": "Array of new images to add",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "replace": {
+                                        "description": "Object where keys = image IDs to replace, values = new image files.\n *                        ⚠️ Swagger UI не поддерживает загрузку файлов в объекте, используйте curl/Postman.",
+                                        "type": "object",
+                                        "example": {
+                                            "52": "file.jpg",
+                                            "53": "another.png"
+                                        },
+                                        "additionalProperties": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "delete": {
+                                        "description": "IDs of images to delete",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 52
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product successfully updated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/product-store": {
+            "post": {
+                "tags": [
+                    "AdminPanel"
+                ],
+                "summary": "Create new product (with images)",
+                "operationId": "db7c5e1fb8d4d7b8ec3209eeb8978d7c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price",
+                                    "description",
+                                    "images"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "computer"
+                                    },
+                                    "price": {
+                                        "type": "integer",
+                                        "example": 12000
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Тестовый продукт"
+                                    },
+                                    "images": {
+                                        "description": "One or more product images",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "other_field": {
+                                        "description": "Optional additional field",
+                                        "type": "string",
+                                        "example": "value"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product successfully listed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product successfully listed"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error (e.g. no photo uploaded)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Photo not uploaded"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/product/{itemId}": {
+            "delete": {
+                "tags": [
+                    "AdminPanel"
+                ],
+                "summary": "Delete product",
+                "operationId": "f142ad5b0d534d46491d04ed8e917d5d",
+                "parameters": [
+                    {
+                        "name": "itemId",
+                        "in": "path",
+                        "description": "ID of the product to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 77
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product successfully deleted"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "User not authorized to delete this product",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "You are not authorized to access this product"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict: product cannot be deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "This product cannot be deleted as there are existing orders for it"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/orders/{orderId}": {
+            "post": {
+                "tags": [
+                    "AdminPanel"
+                ],
+                "summary": "Update order status",
+                "operationId": "8f66e979b50761d9363317f119232d5a",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "in": "path",
+                        "description": "ID of the order to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 365
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "transition": {
+                                        "description": "Transition to apply to the order (depends on state machine)",
+                                        "type": "string",
+                                        "example": "pay"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status successfully updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Status successfully updated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Status update error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Status update error."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/orders": {
+            "get": {
+                "tags": [
+                    "AdminPanel"
+                ],
+                "summary": "Список всех заказов (только для администратора)",
+                "description": "Возвращает список всех заказов вместе с товарами и пользователями (только для администратора).",
+                "operationId": "11dd445cb749b6518c8fa576a5ab675d",
+                "responses": {
+                    "200": {
+                        "description": "Список заказов с данными пользователей и товаров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "order_id": {
+                                                "type": "integer",
+                                                "example": 6
+                                            },
+                                            "user_id": {
+                                                "type": "integer",
+                                                "example": 28
+                                            },
+                                            "product_id": {
+                                                "type": "integer",
+                                                "example": 80
+                                            },
+                                            "seller_id": {
+                                                "type": "integer",
+                                                "example": 28
+                                            },
+                                            "price": {
+                                                "type": "number",
+                                                "example": 78000
+                                            },
+                                            "quantity": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-10-03T23:24:12.000000Z"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-10-03T23:24:12.000000Z"
+                                            },
+                                            "orders": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 6
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 28
+                                                    },
+                                                    "address": {
+                                                        "type": "string",
+                                                        "example": "Пушкина"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string",
+                                                        "example": "+79804994994"
+                                                    },
+                                                    "comment": {
+                                                        "type": "string",
+                                                        "example": "Дом калатушкина"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "delivered"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "user": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 28
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "TestName"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "test@gmail.com"
+                                                            },
+                                                            "email_verified_at": {
+                                                                "type": "string",
+                                                                "format": "date-time"
+                                                            },
+                                                            "role_id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "date-time"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "product": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 80
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 28
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "new Mobile"
+                                                    },
+                                                    "price": {
+                                                        "type": "string",
+                                                        "example": "78000"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "img__connect": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 99
+                                                                },
+                                                                "product_id": {
+                                                                    "type": "integer",
+                                                                    "example": 80
+                                                                },
+                                                                "path": {
+                                                                    "type": "string",
+                                                                    "example": "images/device/68dcfa57efc08.jpg"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                },
+                                                                "updated_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован или нет прав доступа"
+                    },
+                    "403": {
+                        "description": "Доступ к контенту запрещен"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get a JWT token",
+                "operationId": "7737d2df9d6e84906880858c623375c0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "test@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "JWT Token Generated Successfully"
+                    }
+                }
+            }
+        },
+        "/api/cart/items": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Add product to cart",
+                "operationId": "3ffe281ea85ee67c2f7bdf67e88ae78c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "product_id": {
+                                        "type": "integer",
+                                        "example": "66"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The product has been successfully added to the cart"
+                    },
+                    "404": {
+                        "description": "The specified product was not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/cart": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Show cart items",
+                "operationId": "0d6fe488c3f7173e427bda3cc343e6ef",
+                "responses": {
+                    "200": {
+                        "description": "Cart returned successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/cart/items/{ItemId}": {
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Removing a product from the cart",
+                "operationId": "46705e9536fc1a70d3921c15b170bcea",
+                "parameters": [
+                    {
+                        "name": "ItemId",
+                        "in": "path",
+                        "description": "remove",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 77
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product successfully removed"
+                    },
+                    "404": {
+                        "description": "Cart product not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Change product quantity",
+                "operationId": "20e86595636e1fe4c50a26ca898d41b7",
+                "parameters": [
+                    {
+                        "name": "ItemId",
+                        "in": "path",
+                        "description": "Cart item ID",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": "3"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The quantity of the item in the cart has been successfully updated"
+                    },
+                    "404": {
+                        "description": "Specified product not found in the cart"
+                    },
+                    "500": {
+                        "description": "Invalid quantity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/home/": {
+            "get": {
+                "tags": [
+                    "Home"
+                ],
+                "summary": "Получить список продуктов для главной страницы",
+                "description": "Возвращает список продуктов (с изображениями), ограниченный 10 элементами.",
+                "operationId": "08dcd68874bdac076274647f2f74a917",
+                "responses": {
+                    "200": {
+                        "description": "Список продуктов успешно получен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 80
+                                            },
+                                            "user_id": {
+                                                "type": "integer",
+                                                "example": 28
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "new Mobile"
+                                            },
+                                            "price": {
+                                                "type": "string",
+                                                "example": "78000"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-10-01T09:54:31.000000Z"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-10-02T00:21:23.000000Z"
+                                            },
+                                            "img__connect": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 99
+                                                        },
+                                                        "product_id": {
+                                                            "type": "integer",
+                                                            "example": 80
+                                                        },
+                                                        "path": {
+                                                            "type": "string",
+                                                            "example": "images/device/68dcfa57efc08.jpg"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-10-01T09:54:33.000000Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-10-01T09:54:33.000000Z"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован (требуется Bearer токен)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/home/search/{query}": {
+            "get": {
+                "tags": [
+                    "Home"
+                ],
+                "summary": "Поиск продуктов",
+                "description": "Возвращает список продуктов по ключевому слову.",
+                "operationId": "f3aad9e924e9ee506b60ac66295cabf9",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "path",
+                        "description": "Поисковый запрос",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "comp"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список найденных продуктов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "product": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 82
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 28
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "computer"
+                                                    },
+                                                    "price": {
+                                                        "type": "string",
+                                                        "example": "12000"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "img__connect": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 103
+                                                                },
+                                                                "product_id": {
+                                                                    "type": "integer",
+                                                                    "example": 82
+                                                                },
+                                                                "path": {
+                                                                    "type": "string",
+                                                                    "example": "images/device/68ddef143fd17.jpg"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                },
+                                                                "updated_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован (нет Bearer токена)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create a new order",
+                "operationId": "95ed72aa69e064ac01872c332a7aa3d5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "address",
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Пушкина/Калатушкина"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+8189888997"
+                                    },
+                                    "comment": {
+                                        "type": "string",
+                                        "example": "Хочу в красном"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Order created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Missing or invalid token.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Cart is empty, order cannot be created.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Your cart is empty"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/order_items": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get user orders with items",
+                "operationId": "a4acfb78b9a83e736b5779c1b7cd94bf",
+                "responses": {
+                    "200": {
+                        "description": "List of orders with order items",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 42
+                                            },
+                                            "user_id": {
+                                                "type": "integer",
+                                                "example": 20
+                                            },
+                                            "address": {
+                                                "type": "string",
+                                                "example": "Пушкина/Калатушкина"
+                                            },
+                                            "phone": {
+                                                "type": "string",
+                                                "example": "+8189888997"
+                                            },
+                                            "comment": {
+                                                "type": "string",
+                                                "example": "Хочу в красном"
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "example": "pending"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-10-02T23:16:05.000000Z"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-10-02T23:16:05.000000Z"
+                                            },
+                                            "order_items": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 33
+                                                        },
+                                                        "order_id": {
+                                                            "type": "integer",
+                                                            "example": 42
+                                                        },
+                                                        "product_id": {
+                                                            "type": "integer",
+                                                            "example": 80
+                                                        },
+                                                        "price": {
+                                                            "type": "number",
+                                                            "example": 78000
+                                                        },
+                                                        "quantity": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-10-02T23:16:05.000000Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-10-02T23:16:05.000000Z"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Missing or invalid token.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/product/{id}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Show products(limit 10)",
+                "operationId": "6ef7f7ba4cea69a732bb075dce4e4cb9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id Product",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok, Product Retrieved Successfully"
+                    },
+                    "404": {
+                        "description": "product not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Get user profile data",
+                "operationId": "9bc6db055faeec9123574ad264577c03",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved user profile data"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/data": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "change a user data",
+                "operationId": "ef9c2abeb7dc591a7ce43537aacf420b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Ivan"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "change a user data"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/password": {
+            "patch": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Update user password",
+                "operationId": "347a5cefbafe5b75dd766fc0eec37bdb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "old_password": {
+                                        "type": "string",
+                                        "example": "MyOldPassword123"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "example": "MyNewPassword456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password successfully updated"
+                    },
+                    "422": {
+                        "description": "The current password is Invalid"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/email": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Send code to the email",
+                "operationId": "b686d597890049b5c7cb1d20e06b4479",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "test@gmail.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A confirmation code has been sent to the specified email"
+                    },
+                    "400": {
+                        "description": "You entered the same email as your current one"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Update user email",
+                "operationId": "ec704842e0fbe1b662f0de83802695f0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "test@gmail.com"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "example": "1234"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email has been successfully updated"
+                    },
+                    "400": {
+                        "description": "You entered the same email as your current one"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user and send confirmation code",
+                "operationId": "e5830da3ecff70e302e40f7e6f49e844",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Artyr"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "stop@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Registration successful. Confirmation code required.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Registration successful, code confirmation required"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Email is already in use.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Email in use"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/register/check-code": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verify email confirmation code",
+                "operationId": "ad489012fadedf744c39bcf29423a0ed",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "stop@gmail.com"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "example": "7284"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Code confirmed, registration successful.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Code confirmed, registration successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Email not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Email not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid confirmation code.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid Code"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/register/regenerateCode": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Regenerate email confirmation code",
+                "operationId": "1077caf2935cffc1c008f297e1488011",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "testr201007@gmail.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "New confirmation code has been sent.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "New confirmation code has been sent"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Email not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Email not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Profile",
+            "description": "Profile related endpoints"
+        },
+        {
+            "name": "AdminPanel",
+            "description": "AdminPanel"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Cart",
+            "description": "Cart"
+        },
+        {
+            "name": "Home",
+            "description": "Home"
+        },
+        {
+            "name": "Orders",
+            "description": "Orders"
+        },
+        {
+            "name": "Products",
+            "description": "Products"
+        }
+    ]
+}

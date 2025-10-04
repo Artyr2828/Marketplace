@@ -1,36 +1,31 @@
 <?php
 namespace App\Services\Order;
-use App\Models\Product;
-use App\Services\Order\CheckNotNull;
+
 use App\Services\Order\OrderRequiredValidate;
-use App\Models\OrderItem;
+use App\Models\Carts;
+use App\Events\OrderStore;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Models\CartItems;
+use App\Models\OrdersTable;
 class OrderService{
-    private $checkNotNull;
     private $orderRequiredValidate;
 
-    public function __construct(CheckNotNull $checkNotNull, OrderRequiredValidate $orderRequiredValidate){
-        $this->checkNotNull = $checkNotNull;
+    public function __construct(OrderRequiredValidate $orderRequiredValidate){
         $this->orderRequiredValidate = $orderRequiredValidate;
     }
 
-    /**
- * Добавляем заказ в БД
- * @param int $productId идентификатор продукта
- * @param string $address адрес пользователя
- * @param string $phone номер телефона пользователя
- *
- */
 
-    public function store(int $productId, string $address, string $phone, string $comment){
+    public function store(string $address, string $phone, string $comment){
         //Берем Пользователя
         $user = auth()->user();
-        //Берем продукт который будем добавлять в "заказы"(может быть null)
-        $product = Product::find($productId);
-        //проверяем на null(валидируем)
-        $this->checkNotNull->validate($product);
-        //Берем quantity из CartItems
+        //Берем продукты которые будем добавлять в "заказы"(может быть null)
+        $products = Carts::where('user_id', $user->id)->first();
+
+        if ($products->items()->get()->isEmpty()){
+           throw new HttpResponseException(response()->json(["status"=>"error","error"=>"Your cart is empty"], 500));
+        }
+        //Проверяем на null Корзину и ее содержимое
         $this->orderRequiredValidate->validate($user->cart);
-        $quantity = $user->cart->items()->where('product_id', $productId);
 
         //Делаем Заказ(может быть null)
         $order = $user->order()->create([
@@ -40,11 +35,18 @@ class OrderService{
         ]);
 
         //Добавляем предметы в заказе
+        foreach ($products->items as $item){
+        error_log("item" . $item->price);
         $order->orderItems()->firstOrCreate([
-            'product_id'=>$productId,
-             'price'=>$product->price,
-             'quantity'=>1
+            'seller_id'=>$item->product->user_id,
+             'user_id'=>$user->id,
+            'product_id'=>$item->product_id,
+             'price'=>$item->product->price,
+             'quantity'=>$item->quantity
         ]);
+     }
+        event(new OrderStore($user));
 
-    }
+  }
 }
+

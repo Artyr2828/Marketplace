@@ -1,7 +1,8 @@
 <?php
 namespace App\Services\HomePage;
-use App\Models\ImgPath;
+
 use App\Models\Product;
+
 class HomePageService{
    public function getProducts(): array{
       $image = Product::with('img_Connect')->limit(20)->get();

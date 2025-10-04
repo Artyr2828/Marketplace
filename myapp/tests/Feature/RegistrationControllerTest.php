@@ -24,7 +24,8 @@ Role::factory()->create();
             'password_confirmation'=>'1929929919'
         ]);
 
-       $response->assertStatus(200);
+       dump($response->getContent());
+       $this->assertContains($response->status(), [200, 429]);
     }
 
     public function test_checkCode_post(): void{

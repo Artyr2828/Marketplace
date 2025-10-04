@@ -12,28 +12,28 @@ class ImgPathSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('img_path')->insert([
-           "product_id"=>38,
-           "path"=>"images/device/samsung-galaxy-j7.png"
-        ]);
+     //   DB::table('img_path')->insert([
+       //    "product_id"=>38,
+        //   "path"=>"images/device/samsung-galaxy-j7.png"
+       // ]);
 
         DB::table('img_path')->insert([
-             "product_id"=>39,
+             "product_id"=>93,
              "path"=>"images/device/nvidia-2202279_1280.jpg"
           ]);
 
         DB::table('img_path')->insert([
-               "product_id"=>40,
+               "product_id"=>94,
                "path"=>"images/device/headphones-1720164_1280.jpg"
         ]);
 
         DB::table('img_path')->insert([
-                 "product_id"=>40,
+                 "product_id"=>94,
                  "path"=>"images/device/headphones-3683983_1280.jpg"
         ]);
 
         DB::table('img_path')->insert([
-                   "product_id"=>41,
+                   "product_id"=>95,
                    "path"=>"images/device/android-tv-game-controller-1535038_1280.jpg"
           ]);
 

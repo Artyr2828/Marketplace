@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechMarket - Профиль</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --accent: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .profile-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .profile-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--primary);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .profile-avatar:hover .avatar-upload {
+            opacity: 1;
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .profile-email {
+            color: var(--secondary);
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .profile-badge {
+            background: linear-gradient(135deg, var(--accent) 0%, #f97316 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .profile-stats {
+            display: grid;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateX(5px);
+            background: rgba(248, 250, 252, 1);
+        }
+
+        .stat-label {
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 16px;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .tabs-header {
+            display: flex;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            background: white;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .tab-content {
+            padding: 40px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(100, 116, 139, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .action-buttons {
+            display: grid;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Verification */
+        .verification-section {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 25px;
+            border-radius: 16px;
+            border-left: 4px solid var(--success);
+            margin: 25px 0;
+        }
+
+        .verification-title {
+            color: var(--success);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--secondary);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 20px 25px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                height: auto;
+                padding: 15px;
+                gap: 15px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-content {
+                padding: 25px;
+            }
+
+            .profile-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="nav-container">
+            <a href="home.html" class="logo">
+                <i class="fas fa-laptop-code"></i>
+                <span>TechMarket</span>
+            </a>
+            <div class="nav-links">
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Главная</span>
+                </a>
+                <a href="admin.html" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Панель управления</span>
+                </a>
+                <a href="profile.html" class="nav-link active">
+                    <i class="fas fa-user"></i>
+                    <span>Профиль</span>
+                </a>
+                <a href="#" class="nav-link" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Выйти</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="profile-header">
+            <h1 class="profile-title">👋 Ваш профиль</h1>
+            <p class="profile-subtitle">Управляйте вашими данными и настройками</p>
+        </div>
+
+        <div class="profile-grid">
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-avatar" id="user-avatar">
+                    <i class="fas fa-user"></i>
+                    <div class="avatar-upload" onclick="document.getElementById('avatar-input').click()">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <input type="file" id="avatar-input" accept="image/*" style="display: none;" onchange="uploadAvatar(this.files[0])">
+                
+                <h2 class="profile-name" id="user-name">Загрузка...</h2>
+                <p class="profile-email" id="user-email">Загрузка...</p>
+                <div class="profile-badge" id="user-role">Пользователь</div>
+
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">ID пользователя</span>
+                        <span class="stat-value" id="user-id">—</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Статус email</span>
+                        <span class="stat-value" id="email-status">—</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Дата регистрации</span>
+                        <span class="stat-value" id="reg-date">—</span>
+                    </div>
+                </div>
+         <div class="action-buttons">
+    <button class="btn btn-primary" onclick="switchTab('profile')">
+        <i class="fas fa-edit"></i>Редактировать профиль
+    </button>
+    <button class="btn btn-secondary" onclick="switchTab('security')">
+        <i class="fas fa-shield-alt"></i>Безопасность
+    </button>
+<button class="btn btn-secondary" id="admin-panel-btn" onclick="goToAdmin()">
+    <i class="fas fa-cog"></i>Панель управления
+</button>
+	 </div>
+            </div>
+
+            <!-- Tabs Content -->
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <div class="tab active" data-tab="profile">📝 Профиль</div>
+                    <div class="tab" data-tab="security">🔐 Безопасность</div>
+                    <div class="tab" data-tab="email">📧 Email</div>
+                </div>
+
+                <!-- Profile Tab -->
+                <div class="tab-content active" id="profile-tab">
+                    <h3 style="margin-bottom: 25px; color: var(--dark);">Редактирование профиля</h3>
+                    <form id="profile-form">
+                        <div class="form-group">
+                            <label class="form-label">Имя пользователя</label>
+                            <input type="text" class="form-input" id="name-input" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Текущий Email</label>
+                            <input type="email" class="form-input" id="current-email" disabled style="background: #f8fafc;">
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i>Сохранить изменения
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Security Tab -->
+                <div class="tab-content" id="security-tab">
+                    <h3 style="margin-bottom: 25px; color: var(--dark);">Изменение пароля</h3>
+                    <form id="password-form">
+                        <div class="form-group">
+                            <label class="form-label">Текущий пароль</label>
+                            <input type="password" class="form-input" name="old_password" required minlength="8">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Новый пароль</label>
+                            <input type="password" class="form-input" name="new_password" required minlength="8">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Подтвердите новый пароль</label>
+                            <input type="password" class="form-input" name="confirm_password" required minlength="8">
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-key"></i>Обновить пароль
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Email Tab -->
+                <div class="tab-content" id="email-tab">
+                    <h3 style="margin-bottom: 25px; color: var(--dark);">Изменение Email</h3>
+                    
+                    <div class="verification-section" id="email-verification" style="display: none;">
+                        <div class="verification-title">📧 Подтверждение Email</div>
+                        <p>Введите код подтверждения, отправленный на новый email</p>
+                        <form id="verify-email-form" style="margin-top: 15px;">
+                            <div class="form-group">
+                                <label class="form-label">Код подтверждения</label>
+                                <input type="text" class="form-input" name="code" required maxlength="4" placeholder="Введите 4-значный код">
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check"></i>Подтвердить Email
+                            </button>
+                        </form>
+                    </div>
+
+                    <form id="email-form">
+                        <div class="form-group">
+                            <label class="form-label">Новый Email</label>
+                            <input type="email" class="form-input" name="email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>Отправить код подтверждения
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+<script>
+class UserProfile {
+    constructor() {
+        this.token = localStorage.getItem('token');
+        this.userData = null;
+        this.pendingEmail = null;
+        this.init();
+    }
+
+    async init() {
+        if (!this.token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        await this.loadProfile();
+        this.setupEventListeners();
+    }
+async loadProfile(forceReload = false) {
+    try {
+        this.showLoading(true);
+        
+        const url = 'http://127.0.0.1:8000/api/profile/' + (forceReload ? `?t=${Date.now()}` : '');
+        
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                this.showError('Требуется авторизация');
+                setTimeout(() => window.location.href = 'login.html', 2000);
+                return;
+            }
+            throw new Error('Ошибка загрузки профиля');
+        }
+
+        this.userData = await response.json();
+        this.renderProfile(forceReload);
+
+    } catch (error) {
+        console.error('Ошибка:', error);
+        this.showError('Не удалось загрузить профиль');
+    } finally {
+        this.showLoading(false);
+    }
+}
+
+renderProfile(forceReload = false) {
+    // Проверяем существование элементов перед обращением к ним
+    const elements = {
+        userName: document.getElementById('user-name'),
+        userEmail: document.getElementById('user-email'),
+        userId: document.getElementById('user-id'),
+        userRole: document.getElementById('user-role'),
+        emailStatus: document.getElementById('email-status'),
+        regDate: document.getElementById('reg-date'),
+        nameInput: document.getElementById('name-input'),
+        currentEmail: document.getElementById('current-email')
+    };
+
+    // Проверяем, что все элементы существуют
+    for (const [key, element] of Object.entries(elements)) {
+        if (!element) {
+            console.error(`Элемент не найден: ${key}`);
+            return;
+        }
+    }
+
+    // Основная информация
+    elements.userName.textContent = this.userData.name;
+    elements.userEmail.textContent = this.userData.email;
+    elements.userId.textContent = `#${this.userData.id}`;
+
+    // Аватар - исправляем путь к изображению
+    const avatar = document.getElementById('user-avatar');
+    if (avatar) {
+        if (this.userData.image && this.userData.image.path !== 'noImage') {
+            // Добавляем базовый URL к пути изображения
+            const baseUrl = 'http://127.0.0.1:8000/';
+            let imagePath = this.userData.image.path;
+            
+            // Убедимся, что путь не начинается с /
+            if (imagePath.startsWith('/')) {
+                imagePath = imagePath.substring(1);
+            }
+            
+            const imageUrl = baseUrl + imagePath + (forceReload ? `?t=${Date.now()}` : '');
+            
+            console.log('Image URL:', imageUrl); // Для отладки
+            
+            avatar.innerHTML = `<img src="${imageUrl}" alt="${this.userData.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentNode.querySelector('.fa-user').style.display='flex';">
+                              <i class="fas fa-user" style="display: none;"></i>
+                              <div class="avatar-upload" onclick="document.getElementById('avatar-input').click()">
+                                  <i class="fas fa-camera"></i>
+                              </div>`;
+        } else {
+            avatar.innerHTML = `<i class="fas fa-user"></i>
+                              <div class="avatar-upload" onclick="document.getElementById('avatar-input').click()">
+                                  <i class="fas fa-camera"></i>
+                              </div>`;
+        }
+    }
+
+    // Роль
+    const role = this.userData.role_id === 1 ? 'Пользователь' : 'Администратор';
+    elements.userRole.textContent = role;
+ // Сначала скрываем кнопку, потом покажем если нужно
+    const adminPanelBtn = document.getElementById('admin-panel-btn');
+    if (adminPanelBtn) {
+        // Сначала скрываем для всех
+        adminPanelBtn.style.display = 'none';
+        
+        // Показываем только администраторам
+        if (this.userData.role_id !== 1) { // Если не обычный пользователь (админ)
+            adminPanelBtn.style.display = 'flex';
+        }
+    }
+    // Статистика
+    elements.emailStatus.textContent =
+        this.userData.email_verified_at ? 'Подтвержден' : 'Не подтвержден';
+    elements.regDate.textContent =
+        new Date(this.userData.created_at).toLocaleDateString('ru-RU');
+
+    // Формы
+    elements.nameInput.value = this.userData.name;
+    elements.currentEmail.value = this.userData.email;
+}
+  showLoading(show) {
+        const loadingElement = document.getElementById('loading');
+        const mainContent = document.querySelector('.profile-grid');
+        
+        if (show) {
+            if (!loadingElement) {
+                // Создаем элемент загрузки если его нет
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'loading';
+                loadingDiv.id = 'loading';
+                loadingDiv.innerHTML = `
+                    <div class="loading-spinner"></div>
+                    <p>Загрузка профиля...</p>
+                `;
+                document.querySelector('.main-container').appendChild(loadingDiv);
+            }
+            if (mainContent) mainContent.style.display = 'none';
+            if (loadingElement) loadingElement.style.display = 'block';
+        } else {
+            if (loadingElement) loadingElement.style.display = 'none';
+            if (mainContent) mainContent.style.display = 'grid';
+        }
+    }
+
+    setupEventListeners() {
+        // Проверяем существование форм перед добавлением обработчиков
+        const forms = {
+            profileForm: document.getElementById('profile-form'),
+            passwordForm: document.getElementById('password-form'),
+            emailForm: document.getElementById('email-form'),
+            verifyEmailForm: document.getElementById('verify-email-form')
+        };
+
+        for (const [formName, form] of Object.entries(forms)) {
+            if (!form) {
+                console.error(`Форма не найдена: ${formName}`);
+                continue;
+            }
+        }
+
+        // Форма профиля
+       // Форма профиля
+if (forms.profileForm) {
+    forms.profileForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
+        // Создаем объект для отправки
+        const data = {};
+        if (formData.get('name')) {
+            data.name = formData.get('name');
+        }
+        
+        await this.updateProfile(data);
+    });
+}
+        // Форма пароля
+        if (forms.passwordForm) {
+            forms.passwordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const data = {
+                    old_password: formData.get('old_password'),
+                    new_password: formData.get('new_password')
+                };
+
+                if (formData.get('new_password') !== formData.get('confirm_password')) {
+                    this.showNotification('Пароли не совпадают', 'error');
+                    return;
+                }
+
+                await this.changePassword(data);
+            });
+        }
+
+        // Форма email
+        if (forms.emailForm) {
+            forms.emailForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                await this.sendEmailCode(formData.get('email'));
+            });
+        }
+
+        // Форма подтверждения email
+        if (forms.verifyEmailForm) {
+            forms.verifyEmailForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                await this.verifyEmailCode(formData.get('code'));
+            });
+        }
+    }
+
+    // Остальные методы остаются без изменений...
+async updateProfile(data) {
+    try {
+        this.showNotification('Обновление профиля...', 'success');
+        
+        const formData = new FormData();
+        if (data.name) {
+            formData.append('name', data.name);
+        }
+        // Если есть файл изображения, он добавляется отдельно через uploadAvatar
+        
+        const response = await fetch('http://127.0.0.1:8000/api/profile/data', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this.token}`
+                // Не устанавливаем Content-Type - браузер сам установит с boundary
+            },
+            body: formData
+        });
+
+        const result = await response.json();
+        if (result.status === 'ok') {
+            this.showNotification('Профиль успешно обновлен', 'success');
+            await this.loadProfile();
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        this.showNotification('Ошибка обновления профиля: ' + error.message, 'error');
+    }
+}
+async uploadAvatar(file) {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('name', this.userData.name);
+
+    try {
+        this.showNotification('Загрузка аватара...', 'success');
+        const response = await fetch('http://127.0.0.1:8000/api/profile/data', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this.token}`
+            },
+            body: formData
+        });
+
+        const result = await response.json();
+        if (result.status === 'ok') {
+            this.showNotification('Аватар успешно обновлен', 'success');
+            
+            // Принудительно обновляем с новым timestamp
+            await this.loadProfile(true);
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        this.showNotification('Ошибка загрузки аватара: ' + error.message, 'error');
+    }
+}
+    async changePassword(data) {
+        try {
+            this.showNotification('Изменение пароля...', 'success');
+            const response = await fetch('http://127.0.0.1:8000/api/profile/password', {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (result.status === 'ok') {
+                this.showNotification('Пароль успешно изменен', 'success');
+                document.getElementById('password-form').reset();
+            } else {
+                throw new Error(result.error || result.message);
+            }
+        } catch (error) {
+            this.showNotification(error.message, 'error');
+        }
+    }
+
+    async sendEmailCode(email) {
+        try {
+            this.showNotification('Отправка кода подтверждения...', 'success');
+            const response = await fetch('http://127.0.0.1:8000/api/profile/email', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            });
+
+            const result = await response.json();
+            if (result.status === 'ok') {
+                this.pendingEmail = email;
+                document.getElementById('email-verification').style.display = 'block';
+                this.showNotification('Код подтверждения отправлен', 'success');
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            this.showNotification(error.message, 'error');
+        }
+    }
+
+    async verifyEmailCode(code) {
+        try {
+            this.showNotification('Подтверждение email...', 'success');
+            const response = await fetch('http://127.0.0.1:8000/api/profile/email', {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: this.pendingEmail,
+                    code: code
+                })
+            });
+
+            const result = await response.json();
+            if (result.status === 'ok') {
+                this.showNotification('Email успешно обновлен', 'success');
+                document.getElementById('email-verification').style.display = 'none';
+                document.getElementById('email-form').reset();
+                this.pendingEmail = null;
+                await this.loadProfile();
+            } else {
+                throw new Error(result.error || result.message);
+            }
+        } catch (error) {
+            this.showNotification(error.message, 'error');
+        }
+    }
+
+    showNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        if (!notification) {
+            console.log(`Уведомление: ${message}`);
+            return;
+        }
+        
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 4000);
+    }
+
+    showError(message) {
+        const mainContainer = document.querySelector('.main-container');
+        if (mainContainer) {
+            mainContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>${message}</h3>
+                    <button class="btn btn-primary" onclick="location.reload()">Попробовать снова</button>
+                </div>
+            `;
+        }
+    }
+}
+
+// Глобальные функции
+function goToAdmin() {
+    window.location.href = 'admin.html';
+}
+
+function switchTab(tabName) {
+    // Убираем активный класс со всех табов и контента
+    document.querySelectorAll('.tab').forEach(tab => {
+        if (tab) tab.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-content').forEach(content => {
+        if (content) content.classList.remove('active');
+    });
+
+    // Активируем выбранный таб
+    const tabElement = document.querySelector(`[data-tab="${tabName}"]`);
+    const contentElement = document.getElementById(`${tabName}-tab`);
+    
+    if (tabElement) tabElement.classList.add('active');
+    if (contentElement) contentElement.classList.add('active');
+}
+
+function uploadAvatar(file) {
+    if (userProfile) {
+        userProfile.uploadAvatar(file);
+    }
+}
+
+function logout() {
+    if (confirm('Вы уверены, что хотите выйти?')) {
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+    }
+}
+
+// Инициализация
+let userProfile;
+document.addEventListener('DOMContentLoaded', () => {
+    userProfile = new UserProfile();
+    
+    // Обработчики для табов
+    document.querySelectorAll('.tab').forEach(tab => {
+        if (tab) {
+            tab.addEventListener('click', () => {
+                switchTab(tab.dataset.tab);
+            });
+        }
+    });
+});
+
+    </script>
+
+    <!-- Элемент загрузки -->
+<div id="loading" class="loading" style="display: none;">
+    <div class="loading-spinner"></div>
+    <p>Загрузка профиля...</p>
+</div>
+</body>
+</html>

@@ -1,29 +1,21 @@
 <?php
 namespace App\Services\Cart;
-use App\Models\User;
 use App\Events\ProductAddedToCart;
 use App\Services\Cart\UpdateOrCreateInDB;
-use App\Services\Cart\ValidaionQuantity;
 use App\Services\Cart\ChangeQuantity;
-use App\Services\Cart\CheckItem;
 use App\Models\CartItems;
-use App\Services\Cart\CheckCart;
 use App\Services\Cart\CheckNotNull;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Models\Product;
 
 class CartService{
    private $updOrCreate;
-   private $validationQuantity;
    private $changeQuantity;
-   private $checkItem;
-   private $checkCart;
    private $checkNotNull;
 
-   public function __construct(UpdateOrCreateInDB $updOrCreate, ValidationQuantity $validationQuantity, ChangeQuantity $changeQuantity, CheckItem $checkItem, CheckCart $checkCart, CheckNotNull $checkNotNull){
+   public function __construct(UpdateOrCreateInDB $updOrCreate, ChangeQuantity $changeQuantity, CheckNotNull $checkNotNull){
      $this->updOrCreate = $updOrCreate;
-     $this->validationQuantity = $validationQuantity;
      $this->changeQuantity = $changeQuantity;
-     $this->checkItem = $checkItem;
-     $this->checkCart = $checkCart;
      $this->checkNotNull = $checkNotNull;
    }
    //Добавляем Товар В Корзину
@@ -33,7 +25,9 @@ class CartService{
      $cart = $user->cart()->firstOrCreate();
      $this->checkNotNull->check($cart, "Корзина пуста");
      $item = $cart->items()->where('product_id', $productId)->first();
-
+     if (!Product::where('id', $productId)->exists()){
+        throw new HttpResponseException(response()->json(["status"=>"error", "error"=>"The specified product was not found"], 404));
+     }
 
      $this->updOrCreate->updateOrCreate($cart, $productId);
      $arrProduct = $cart->items->map(fn ($item)=>$item->product);
@@ -52,7 +46,7 @@ class CartService{
         //Берем Item(продукт в корзине)
         $item = CartItems::where('id', $ItemId)->first();
         //item может быть null(если не найдено)
-        $this->checkNotNull->check($item, "item пуст");
+        $this->checkNotNull->check($item, "Specified product not found in the cart");
         //Изменяем
         $updatedItem = $this->changeQuantity->change($item, $dataQuantity);
 

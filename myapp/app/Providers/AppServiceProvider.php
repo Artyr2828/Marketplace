@@ -14,6 +14,9 @@ use App\Interfaces\UserRegistrationInterface;
 use App\Services\User\UserRegistrationService;
 use App\Interfaces\AuthenticationServiceInterface;
 use App\Services\Auth\AuthenticationService;
+use App\Interfaces\ImageStorageInterface;
+use App\Services\Admin\ImageStorageService;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -26,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ValidationCodeInterface::class, ValidationClientCode::class);
         $this->app->bind(UserRegistrationInterface::class, UserRegistrationService::class);
         $this->app->bind(AuthenticationServiceInterface::class, AuthenticationService::class);
+        $this->app->bind(ImageStorageInterface::class, ImageStorageService::class);
     }
 
     /**

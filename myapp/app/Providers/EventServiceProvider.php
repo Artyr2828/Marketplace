@@ -8,6 +8,8 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use App\Events\ProductAddedToCart;
 use App\Listeners\UpdateCartTotal;
+use App\Events\OrderStore;
+use App\Listeners\DeleteFromCartItems;
 class EventServiceProvider extends ServiceProvider
 {
     /**
@@ -22,7 +24,9 @@ class EventServiceProvider extends ServiceProvider
          ProductAddedToCart::class => [
            UpdateCartTotal::class,
         ],
-
+        OrderStore::class => [
+           DeleteFromCartItems::class
+        ]
     ];
 
     /**
@@ -40,4 +44,5 @@ class EventServiceProvider extends ServiceProvider
     {
         return false;
     }
+
 }

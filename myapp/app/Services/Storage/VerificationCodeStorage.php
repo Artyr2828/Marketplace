@@ -2,6 +2,7 @@
 namespace App\Services\Storage;
 use Illuminate\Support\Facades\Redis;
 use App\Interfaces\VerificationCodeInterface;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class VerificationCodeStorage implements VerificationCodeInterface{
 
@@ -10,7 +11,7 @@ class VerificationCodeStorage implements VerificationCodeInterface{
        if (!$cooldown){
           $ttl = Redis::ttl("cooldown-$email");
 
-          throw new \Exception("подождите $ttl секунд до повторной отправки");
+          throw new HttpResponseException(response()->json(["подождите $ttl секунд до повторной отправки"], 429));
        }
        Redis::set("verify-code-$email", $code, 'EX', $ttlSec);
     }

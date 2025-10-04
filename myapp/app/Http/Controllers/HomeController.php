@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ImgPath;
 use  App\Services\HomePage\HomePageService;
-use App\Models\Product;
+use Psy\Util\Json;
+
 class HomeController extends Controller
 {
    private $homePageService;
@@ -13,15 +13,24 @@ class HomeController extends Controller
        $this->homePageService = $homePageService;
    }
 
-    public function getDataHomePage(Request $r){
+    /**
+ * Отдаем 10 продуктов для главной страницы
+ * @return Json
+ */
+
+    public function getDataHomePage(){
      //отдаем прлдукты с лимтом 10
      $products = $this->homePageService->getProducts();
      return response()->api($products);
     }
 
-    public function search(Request $r){
-      $data = $r->input('search');
-      $product = $this->homePageService->searchProduct($data);
+   /**
+ * Поиск продукта в БД
+ * @param Request $r продукт который хочет найти пользователь
+ */
+
+    public function search(string $word){
+      $product = $this->homePageService->searchProduct($word);
 
       return response()->api(['product'=>$product]);
     }

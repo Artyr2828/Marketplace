@@ -3,9 +3,22 @@ namespace App\Services\Admin;
 
 use App\Models\User;
 use App\Models\Product;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Support\Facades\DB;
+use App\Interfaces\ImageStorageInterface;
+use Illuminate\Http\Request;
+use App\Models\OrdersTable;
+use Sebdesign\SM\Facade as StateMashine;
+use App\Services\Admin\ArrayCaster;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
 class AdminPanelService{
+   private $imageStorage;
+   private $arrayCaster;
+
+   public function __construct(ImageStorageInterface $imageStorage, ArrayCaster $arrayCaster){
+       $this->imageStorage = $imageStorage;
+       $this->arrayCaster = $arrayCaster;
+   }
   /**
  * @param User $user получаем пользователя(админа) чтобы выдать ему продукты
  * @return Collection $product отдаем коллекцию продуктов
@@ -23,31 +36,84 @@ class AdminPanelService{
 
    public function store(array $dataProducts, User $user){
       $files = $dataProducts['image'];
-      $manager = new ImageManager(new Driver());
 
-      $user->products()->create([
+      $product = $user->products()->create([
          'name'=>$dataProducts['name'],
          'price'=>$dataProducts['price']
       ]);
-      $product = Product::where('user_id', $user->id)->first();
-
+      //$product = Product::where('user_id', $user->id)->first();
       $product->desc_Connect()->create([
-          'desc'=>$dataProducts['desc']                                               ]);
+          'desc'=>$dataProducts['desc']
+       ]);
 
       //добавляем в БД изображения
-      foreach ($files as $file){
-         $filename = uniqid() . '.jpg';
-         $image = $manager->read($manager->read($file->getRealPath()));
+      $this->imageStorage->add($product, $files);
+   }
 
-         $image->resize(800, 800, function ($settings){                                  $settings->aspectRatio();
-               $settings->upsize();
-        });
+   /**
+ * @param array $modifiedData Массив текстовых данных продукта для апдейта
+ * @param Product $product Продукт, данные которого должны изменить
+ * @param Request $imageActions информация об действие с изображениями
+   **/
+   public function update(array $modifiedData, Product $product, Request $imageActions){
 
-        $image->save('images/device/' . $filename);
+       DB::transaction(function() use ($modifiedData, $product, $imageActions){
+           //Изменяем Текстовые Данные
+           $product->update($modifiedData);
+           if (isset($modifiedData['description'])){
+           $product->desc_Connect()->updateOrCreate(['product_id'=>$product->id], ['desc' => $modifiedData['description']]);
+          }
+$images = $imageActions->file('images');
 
-        $product->img_Connect()->create([
-            'path'=>'images/device/' . $filename
-        ]);
+           //Добавляем картинку к уже существующим
+           $images = $this->arrayCaster->cast($imageActions->file('images'), null);
+           $replace = $this->arrayCaster->cast(null, $imageActions->file('replace'));
+
+           if ($imageActions->hasFile('images')){
+
+               $this->imageStorage->add($product,$images);
+           }
+           if ($imageActions->hasFile('replace')){
+               $this->imageStorage->update($product, $replace);
+           }
+           if ($imageActions->has('delete')){
+               $this->imageStorage->delete($product, $imageActions->input('delete'));
+           }
+
+           $product->save();
+     });
+}
+
+   /**
+ *  @param OrdersTable $order Заказ, статус которого должны изменить
+ *  @param string $transition информация для изменения статуса
+   **/
+
+   public function updateStatus(OrdersTable $order, string $transition){
+      $stateMashine = StateMashine::get($order, 'graphA');
+
+      if ($stateMashine->can($transition)){
+           $stateMashine->apply($transition);
+           $order->save();
       }
+      else{
+        throw new \Symfony\Component\HttpKernel\Exception\HttpException(422, "Ошибка изменения статуса");
+      }
+   }
+
+   /**
+ * Удаления продукта
+ * @param Product $product Продукт который должны удалить
+ **/
+
+   public function delete(Product $product){
+     if ($product->orderItems()->exists()){
+            throw new HttpResponseException(response()->json(["status"=>"error", "error"=>"This product cannot be deleted as there are existing orders for it"], 409));
+     }
+
+     $deleted = $product->delete();
+     if ($deleted === 0){
+            throw new HttpResponseException(response()->json(["status"=>"error" , "error"=>"Failed to delete product."  ], 409));
+     }
    }
 }

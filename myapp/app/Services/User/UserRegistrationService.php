@@ -1,14 +1,14 @@
 <?php
 namespace App\Services\User;
+
 use App\Models\User;
-use App\Exceptions\EmailAlreadyInUseException;
-use Illuminate\Support\Facades\Hash;
 use App\Interfaces\UserRegistrationInterface;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UserRegistrationService implements UserRegistrationInterface{
   public function ensureUserDoesNotExist(string $email){
        if (User::where('email', $email)->exists()){
-         throw new EmailAlreadyInUseException("Email in Used");
+         throw new HttpResponseException(response()->json(["status"=>"error","error"=>"Email in Used"], 422));
        }
     }
 

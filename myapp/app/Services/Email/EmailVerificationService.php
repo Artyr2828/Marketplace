@@ -3,9 +3,10 @@ namespace App\Services\Email;
 
 use App\Services\Email\GenerateEmailCode;
 use App\Services\Email\EmailSender;
-use App\Services\Email\ValidationClientCode;
 use App\Interfaces\VerificationCodeInterface;
 use App\Interfaces\ValidationCodeInterface;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
 class EmailVerificationService{
     private $EmailSender;
     private $GenerateEmailCode;
@@ -18,8 +19,7 @@ class EmailVerificationService{
        $this->validationClientCode = $validationClientCode;
     }
 
-    public function sendVerificationCodeToEmail(string $email,int $ttlSec){
-
+    public function sendVerificationCodeToEmail(string $email,?int $ttlSec){
        $code = $this->GenerateEmailCode->generate();
        $this->EmailSender->send($email, $code);
        $this->verificationCodeEmail->setCode($email, $ttlSec, $code);
@@ -35,7 +35,7 @@ class EmailVerificationService{
 
     public function regenerateCode(string $email){
         $currentTtl = $this->verificationCodeEmail->getTtl($email);
-      //  $this->verificationCodeEmail->delCode($email);
-        $this->sendVerificationCodeToEmail($email, $currentTtl);
+error_log($currentTtl);
+        $this->sendVerificationCodeToEmail($email, 300);
     }
 }

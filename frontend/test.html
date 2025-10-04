@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тест загрузки файла</title>
+</head>
+<body>
+  <h2>Тест загрузки файла</h2>
+
+  <form id="upload-form" enctype="multipart/form-data">
+    <label>Название:
+      <input type="text" name="name" value="Тестовый товар">
+    </label><br><br>
+
+    <label>Цена:
+      <input type="number" name="price" value="12345">
+    </label><br><br>
+
+    <label>Описание:
+      <textarea name="description">Описание тест</textarea>
+    </label><br><br>
+
+    <label>Изображение:
+      <input type="file" name="image" id="image" accept="image/*" required>
+    </label><br><br>
+
+    <button type="submit">Отправить</button>
+  </form>
+
+  <script>
+    document.getElementById('upload-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      // Проверим что внутри FormData
+      console.log("=== Отправляем FormData ===");
+      for (let [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(key, value.name, value.type, value.size + " bytes");
+        } else {
+          console.log(key, value);
+        }
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/admin/product-store/", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token")
+            // Content-Type не ставим!
+          },
+          body: formData
+        });
+
+        const text = await response.text();
+        console.log("Ответ:", response.status, text);
+
+        if (response.ok) {
+          alert("Успех!");
+        } else {
+          alert("Ошибка: " + response.status);
+        }
+      } catch (err) {
+        console.error("Ошибка сети:", err);
+      }
+    });
+  </script>
+</body>
+</html>

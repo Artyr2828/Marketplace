@@ -3,7 +3,7 @@ namespace App\Services\Auth;
 use App\Interfaces\AuthenticationServiceInterface;
 use Exception;
 use App\Models\User;
-
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AuthenticationService implements AuthenticationServiceInterface{
 
@@ -17,7 +17,7 @@ class AuthenticationService implements AuthenticationServiceInterface{
    $token = auth('api')->attempt($creditails);
 
    if (!$token){
-       throw new \Exception("похоже вы не зарегестрированы");
+       throw new HttpResponseException(response()->json(["status"=>"error", "error"=>"Invalid password or email", "message"=>"пароль не действительный"], 400, [], JSON_UNESCAPED_UNICODE));
    }
    return $token;
   }
@@ -30,10 +30,11 @@ class AuthenticationService implements AuthenticationServiceInterface{
   **/
   public function EnsureEmailIsVerified(?User $user): void{
         if ($user === null){
-            throw new \Exception("Данного пользователя не существует");
+            throw new HttpResponseException(response()->json(["status"=>"error","error"=>"User not found", "message"=>"Данного пользователя не существует"], 404, [], JSON_UNESCAPED_UNICODE));
         }
-        if ($user->email_verified_at === null){                                        throw new \Exception("вы не можете войти в этот аккаунт, пользова
-  тель не подтвержден");
+
+        if ($user->email_verified_at === null){
+          throw new HttpResponseException(response()->json(["status"=>"error"  ,"error"=>"Email not verified", "message"=>"вы не можете войти в этот аккаунт, пользователь не подтвержден"], 403, [], JSON_UNESCAPED_UNICODE));
         }
   }
 }

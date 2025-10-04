@@ -33,16 +33,29 @@ Route::post('/login', [AuthController::class, 'login']);
 //Роутеры которые требуют Jwt
 Route::middleware('auth:api')->group(function(){
      Route::get('/home', [HomeController::class, 'getDataHomePage']);
-     Route::get('/home/search', [HomeController::class, 'search']);
+     Route::get('/home/search/{word}', [HomeController::class, 'search']);
      Route::get('/product/{id}', [ProductPageController::class, 'show']);
      Route::post('/cart/items', [CartController::class, 'addToCart']);
      Route::get('/cart', [CartController::class, 'getToCart']);
      Route::patch('/cart/items/{ItemId}', [CartController::class, 'changeQuantity']);
-     Route::delete('/cart/items/{ItemId}', [CartController::class, 'deleteItem']);
+     Route::delete('/cart/items/{itemId}', [CartController::class, 'deleteItem']);
      Route::post('/orders', [OrderController::class, 'store']);
      Route::get('/orders/order_items', [OrderController::class, 'getOrderItems']);
-     Route::get('/admin', [AdminPanelController::class, 'getProductItems']);
-     Route::post('/admin/product-store', [AdminPanelController::class, 'store']);
+
+
      Route::get('/profile', [ProfileController::class, 'getDataUser']);
-     Route::get('/admin/orders', [AdminPanelController::class, 'getOrders']);
+
+     Route::post('/profile/data', [ProfileController::class, 'changeDataUser']);
+     Route::patch('/profile/password', [ProfileController::class, 'changePasswordUser']);
+     Route::post('/profile/email', [ProfileController::class, 'sendEmailVerificationCode']);
+     Route::patch('/profile/email', [ProfileController::class, 'changeEmailUser']);
+
+     Route::middleware('admin')->group(function(){
+        Route::get('/admin', [AdminPanelController::class, 'getProductItems']);
+        Route::post('/admin/product-store', [AdminPanelController::class, 'store']);
+        Route::get('/admin/orders', [AdminPanelController::class, 'getOrders']);
+        Route::patch('/admin/product/{ItemId}', [AdminPanelController::class, 'update']);
+        Route::delete('/admin/product/{ItemId}', [AdminPanelController::class, 'delete']);
+        Route::post('/admin/orders/{orderId}', [AdminPanelController::class, 'updateStatus']);
+     });
    });
