@@ -37,21 +37,53 @@ Backend для маркетплейса, написанный на Laravel.
   ```bash
   https://github.com/Artyr2828/Pet-project-in-laravel
 - перейти в папку проекта (cd myshop-api)
-- Устоновить зависимости
+  
+- Установить зависимости
   composer install
+  
 - Скопировать .env.example в .env и настройть
   cp .env.example .env
   (настроить параметры базы данных, Redis и JWT
+  
 - Запустить Миграции
   php artisan migrate
-- Запустить Сервер
-- php -c /data/data/com.termux/files/usr/etc/php/php.ini artisan serve
+  
+- Запустить Сервер php(обязательно)
+- php -S 127.0.0.1:8000 -t public
+  
+- Запустить Базу данных(обязательно)
+  pg_ctl -D $PREFIX/var/lib/postgresql -l $PREFIX/var/lib/postgresql/logfile start
+
+- Запустить Redis сервер(обязательно)
+  redis-cli
+
+- Запустить Cron(опционально)
+  Crond
+
+- Запустить Воркера(опционально)
+  php artisan queue:work
 
 
-## Просмотр Проекта 
+## Просмотр Проекта
+Важно!
+Перед началом просмотра запустите PostgreSql, Redis, Php сервер (
+
+pg_ctl -D $PREFIX/var/lib/postgresql -l $PREFIX/var/lib/postgresql/logfile start
+
+php -S 127.0.0.1:8000 -t public
+
+)
+
 - Документация
-- http://localhost:8000/api/documentation
-- 
+http://localhost:8000/api/documentation
+
+- curl запросы
+  curl.txt в папке pet(главная папка)
+
+- внешний просмотр
+  Откройте папку frontend (pet/frontend) и запустите сервер на 3000 порту (php -S localhost:3000), далее откройте любой браузер и зайдите по ссылке (http://localhost:3000)
+  
+Рекомендуемое(Документация, внешний просмотр)
   
 
 
