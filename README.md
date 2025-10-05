@@ -36,46 +36,58 @@ Backend для маркетплейса, написанный на Laravel.
 - клонировать репозиторий
   ```bash
   https://github.com/Artyr2828/Pet-project-in-laravel
-- перейти в папку проекта (cd myshop-api)
+- перейти в папку проекта
+  ```bash
+  cd myshop-api
   
 - Установить зависимости
+  ```bash 
   composer install
   
 - Скопировать .env.example в .env и настройть
+  ```bash
   cp .env.example .env
-  (настроить параметры базы данных, Redis и JWT
+  
+(настроить параметры базы данных, Redis и JWT
   
 - Запустить Миграции
+  ```bash
   php artisan migrate
   
 - Запустить Сервер php(обязательно)
-- php -S 127.0.0.1:8000 -t public
+  ```bash
+  php -S 127.0.0.1:8000 -t public
   
 - Запустить Базу данных(обязательно)
+  ```bash
   pg_ctl -D $PREFIX/var/lib/postgresql -l $PREFIX/var/lib/postgresql/logfile start
 
 - Запустить Redis сервер(обязательно)
+  ```bash
   redis-cli
 
 - Запустить Cron(опционально)
+  ```bash
   Crond
 
 - Запустить Воркера(опционально)
+  ```bash
   php artisan queue:work
 
 
 ## Просмотр Проекта
 Важно!
 Перед началом просмотра запустите PostgreSql, Redis, Php сервер (
-
+```bash
 pg_ctl -D $PREFIX/var/lib/postgresql -l $PREFIX/var/lib/postgresql/logfile start
 
 php -S 127.0.0.1:8000 -t public
-
+```
 )
 
 - Документация
-http://localhost:8000/api/documentation
+  ```bash
+  http://localhost:8000/api/documentation
 
 - curl запросы
   curl.txt в папке pet(главная папка)
